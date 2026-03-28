@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 
 const tools = [
   { name: "Calculator", desc: "A sleek calculator for quick maths.", href: "/tools/calculator", emoji: "🧮" },
+  { name: "Dice Roller", desc: "3D physics-based dice roller. Roll and see what fate decides.", href: "/tools/dice", emoji: "🎲" },
 ];
 
 export default function ToolsPage() {
