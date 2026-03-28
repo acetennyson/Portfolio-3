@@ -18,7 +18,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
             <Link href="/projects" className="transition-opacity hover:opacity-60" style={{ color: "var(--fg)" }}>Projects</Link>
             <Link href="/tools" className="transition-opacity hover:opacity-60" style={{ color: "var(--fg)" }}>Tools</Link>
             <Link href="#blog" className="transition-opacity hover:opacity-60" style={{ color: "var(--fg)" }}>Blog</Link>
-            <Link href="/admin" className="transition-opacity hover:opacity-60" style={{ color: "var(--fg-muted)" }}>Admin</Link>
+            <Link href="/admin" className="transition-opacity hover:opacity-60 sr-only" style={{ color: "var(--fg-muted)" }}>Admin</Link>
             <ThemeToggle />
           </nav>
         </div>
