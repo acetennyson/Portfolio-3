@@ -6,7 +6,7 @@ import { ArrowLeft } from "lucide-react";
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const blog = await getBlogBySlug(slug);
+  const blog = await getBlogBySlug(slug) as any;
 
   if (!blog) return notFound();
 

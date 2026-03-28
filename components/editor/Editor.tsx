@@ -39,7 +39,8 @@ export default function Editor({ initialData, onChange }: EditorProps) {
       },
       tools: {
         header: {
-          class: Header,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          class: Header as any,
           config: {
             placeholder: "Enter a header",
             levels: [1, 2, 3, 4],
@@ -51,7 +52,8 @@ export default function Editor({ initialData, onChange }: EditorProps) {
           inlineToolbar: true,
         },
         paragraph: {
-          class: Paragraph,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          class: Paragraph as any,
           inlineToolbar: true,
         },
         // We will add image tool configuration later when Firebase storage upload is set up
