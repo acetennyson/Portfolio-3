@@ -1,26 +1,78 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #06060a;
+  --bg-card: #0f0f17;
+  --bg-card-hover: #14141e;
+  --border: rgba(255,255,255,0.07);
+  --fg: #ededf5;
+  --fg-muted: #7070a0;
+  --accent: #8b5cf6;
+  --grad-start: #8b5cf6;
+  --grad-end: #3b82f6;
+  --grad-alt-start: #ec4899;
+  --grad-alt-end: #8b5cf6;
+}
+
+[data-theme="light"] {
+  --bg: #f0f0f7;
+  --bg-card: #ffffff;
+  --bg-card-hover: #e8e8f2;
+  --border: rgba(0,0,0,0.08);
+  --fg: #0a0a12;
+  --fg-muted: #5a5a7a;
+  --accent: #7c3aed;
+  --grad-start: #7c3aed;
+  --grad-end: #2563eb;
+  --grad-alt-start: #db2777;
+  --grad-alt-end: #7c3aed;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+* { box-sizing: border-box; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-geist-sans, Arial, sans-serif);
+  transition: background 0.3s, color 0.3s;
+}
+
+.grad-text {
+  background: linear-gradient(135deg, var(--grad-start), var(--grad-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.grad-bg {
+  background: linear-gradient(135deg, var(--grad-start), var(--grad-end));
+}
+
+.grad-alt-bg {
+  background: linear-gradient(135deg, var(--grad-alt-start), var(--grad-alt-end));
+}
+
+/* white text always on gradient buttons */
+.btn-grad {
+  background: linear-gradient(135deg, var(--grad-start), var(--grad-end));
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(139,92,246,0.35);
+  box-shadow: 0 12px 40px rgba(139,92,246,0.15);
 }
