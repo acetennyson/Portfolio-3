@@ -3,7 +3,11 @@ import { ArrowRight } from "lucide-react";
 
 const tools = [
   { name: "Calculator", desc: "A sleek calculator for quick maths.", href: "/tools/calculator", emoji: "🧮" },
-  { name: "Dice Roller", desc: "3D physics-based dice roller. Roll and see what fate decides.", href: "/tools/dice", emoji: "🎲" },
+  { name: "Dice Roller", desc: "3D physics-based dice roller.", href: "/tools/dice", emoji: "🎲" },
+  { name: "Weather Forecast", desc: "Search by city, ZIP, IP, or coordinates. 7-day forecast.", href: "/tools/weather", emoji: "🌤️" },
+  { name: "Compass", desc: "Real-time compass using device orientation.", href: "/tools/compass", emoji: "🧭" },
+  { name: "Universal Converter", desc: "Currency, length, weight, temperature, time & more.", href: "/tools/converter", emoji: "🔄" },
+  { name: "World Clock", desc: "Multiple timezones with analog, digital, minimal & neon styles.", href: "/tools/world-clock", emoji: "🕐" },
 ];
 
 export default function ToolsPage() {
