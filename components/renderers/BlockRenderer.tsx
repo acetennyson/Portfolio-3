@@ -8,7 +8,7 @@ export default function BlockRenderer({ blocks }: { blocks: any[] }) {
       {blocks.map((block, index) => {
         switch (block.type) {
           case "header": {
-            const Tag = `h${block.data.level}` as keyof JSX.IntrinsicElements;
+            const Tag = `h${block.data.level}` as keyof React.JSX.IntrinsicElements;
             const sizes: Record<number, string> = { 1: "text-3xl font-black mt-8 mb-4", 2: "text-2xl font-bold mt-6 mb-3", 3: "text-xl font-bold mt-5 mb-2" };
             return (
               <Tag key={index} className={sizes[block.data.level] || "text-lg font-bold mt-4 mb-2"}
