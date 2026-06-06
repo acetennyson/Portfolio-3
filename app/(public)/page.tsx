@@ -7,17 +7,21 @@ import { GithubIcon, TwitterIcon, LinkedinIcon } from "../../components/SocialIc
 
 export const revalidate = 60;
 
+function formatDate(date: any): string {
+  if (!date) return "Just now";
+  if (date?.toDate?.()) return new Date(date.toDate()).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  if (date instanceof Date) return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return String(date);
+}
+
 export default async function HomePage() {
   const [liveBlogs, liveProjects] = await Promise.all([
     getBlogs().catch(() => []),
-    getProjects("live").catch(() => []),
+    getProjects().catch(() => []),
   ]);
 
   const projects = liveProjects.length ? liveProjects.slice(0, 3) : staticProjects;
   const blogs = liveBlogs.length ? liveBlogs.slice(0, 4) : staticBlogs;
-  const isStaticBlog = !liveBlogs.length;
-  const featuredBlog = isStaticBlog ? (blogs as typeof staticBlogs).find(b => b.featured) : null;
-  const restBlogs = isStaticBlog ? (blogs as typeof staticBlogs).filter(b => !b.featured) : blogs;
 
   return (
     <div className="space-y-32 pb-20">
@@ -30,10 +34,8 @@ export default async function HomePage() {
           <div className="absolute bottom-0 -left-20 w-[400px] h-[400px] rounded-full blur-[100px] opacity-10" style={{ background: "var(--grad-end)" }} />
         </div>
 
-        {/* avatar */}
         <div className="mb-6 relative">
           <div className="w-20 h-20 rounded-full p-0.5 grad-bg">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={siteConfig.avatar} alt={siteConfig.name} className="w-full h-full rounded-full object-cover" />
           </div>
           <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-green-500 border-2" style={{ borderColor: "var(--bg)" }} />
@@ -46,7 +48,6 @@ export default async function HomePage() {
           <span className="grad-text">People Love</span>
         </h1>
 
-        {/* typing role */}
         <p className="text-xl font-semibold mb-6 h-8">
           <TypingRole roles={roles} />
         </p>
@@ -68,10 +69,9 @@ export default async function HomePage() {
           </a>
         </div>
 
-        {/* social */}
         <div className="flex items-center gap-3 mb-14">
           {[
-          { href: siteConfig.social.github, icon: <GithubIcon size={17} /> },
+            { href: siteConfig.social.github, icon: <GithubIcon size={17} /> },
             { href: siteConfig.social.twitter, icon: <TwitterIcon size={17} /> },
             { href: siteConfig.social.linkedin, icon: <LinkedinIcon size={17} /> },
           ].map(({ href, icon }) => (
@@ -83,7 +83,6 @@ export default async function HomePage() {
           ))}
         </div>
 
-        {/* stats */}
         <div className="flex flex-wrap justify-center gap-4 mb-10">
           {siteConfig.stats.map(({ value, label }) => (
             <div key={label} className="rounded-2xl px-6 py-4 text-center"
@@ -94,7 +93,6 @@ export default async function HomePage() {
           ))}
         </div>
 
-        {/* skills */}
         <div className="flex flex-wrap justify-center gap-2">
           {skills.map(s => (
             <span key={s} className="rounded-full px-3 py-1 text-xs font-medium"
@@ -138,9 +136,8 @@ export default async function HomePage() {
           {projects.map((project: any, i: number) => (
             <div key={project.id} className="card group overflow-hidden flex flex-col">
               <div className="relative aspect-[16/10] overflow-hidden" style={{ background: "var(--bg-card-hover)" }}>
-                {project.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={project.image} alt={project.name}
+                {project.coverImage ? (
+                  <img src={project.coverImage} alt={project.title}
                     className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110" />
                 ) : (
                   <div className="flex items-center justify-center w-full h-full text-5xl font-black select-none grad-text opacity-20">
@@ -149,13 +146,13 @@ export default async function HomePage() {
                 )}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   style={{ background: "linear-gradient(to top, rgba(6,6,10,0.75) 0%, transparent 60%)" }} />
-                {project.tag && (
+                {project.featured && (
                   <span className="absolute top-3 left-3 rounded-full px-2.5 py-1 text-xs font-bold text-white btn-grad">
-                    {project.tag}
+                    Featured
                   </span>
                 )}
-                {project.url && (
-                  <a href={project.url} target="_blank" rel="noopener noreferrer"
+                {project.liveUrl && (
+                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
                     className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                     style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)", color: "#fff" }}>
                     <ExternalLink size={13} />
@@ -163,13 +160,13 @@ export default async function HomePage() {
                 )}
               </div>
               <div className="p-5 flex flex-col gap-2 flex-1">
-                <h3 className="font-bold text-base" style={{ color: "var(--fg)" }}>{project.name}</h3>
+                <h3 className="font-bold text-base" style={{ color: "var(--fg)" }}>{project.title}</h3>
                 {project.description && (
                   <p className="text-xs leading-relaxed line-clamp-2" style={{ color: "var(--fg-muted)" }}>{project.description}</p>
                 )}
-                {project.techs && (
+                {project.technologies && (
                   <div className="flex flex-wrap gap-1.5 mt-auto pt-2">
-                    {project.techs.map((t: string) => (
+                    {project.technologies.map((t: string) => (
                       <span key={t} className="text-xs px-2 py-0.5 rounded-full"
                         style={{ background: "var(--bg-card-hover)", color: "var(--fg-muted)", border: "1px solid var(--border)" }}>
                         {t}
@@ -191,7 +188,6 @@ export default async function HomePage() {
         </div>
         <div className="card overflow-hidden flex flex-col sm:flex-row">
           <div className="sm:w-2/5 aspect-video sm:aspect-auto relative overflow-hidden" style={{ background: "var(--bg-card-hover)" }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={currentlyBuilding.image} alt={currentlyBuilding.name} className="object-cover w-full h-full" />
             <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(139,92,246,0.3), rgba(59,130,246,0.3))" }} />
           </div>
@@ -229,9 +225,8 @@ export default async function HomePage() {
                   <Star key={i} size={13} fill="currentColor" style={{ color: "var(--accent)" }} />
                 ))}
               </div>
-              <p className="text-sm leading-relaxed flex-1" style={{ color: "var(--fg-muted)" }}>"{quote}"</p>
+              <p className="text-sm leading-relaxed flex-1" style={{ color: "var(--fg-muted)" }}>&ldquo;{quote}&rdquo;</p>
               <div className="flex items-center gap-3 pt-2" style={{ borderTop: "1px solid var(--border)" }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={avatar} alt={name} className="w-9 h-9 rounded-full object-cover" />
                 <div>
                   <p className="text-sm font-bold" style={{ color: "var(--fg)" }}>{name}</p>
@@ -250,45 +245,21 @@ export default async function HomePage() {
             <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "var(--accent)" }}>Writing</p>
             <h2 className="text-4xl font-black tracking-tight" style={{ color: "var(--fg)" }}>Latest Thoughts</h2>
           </div>
+          <Link href="/blog" className="flex items-center gap-1 text-sm font-semibold transition-opacity hover:opacity-60"
+            style={{ color: "var(--fg-muted)" }}>
+            All posts <ArrowRight size={14} />
+          </Link>
         </div>
 
-        {/* featured post */}
-        {featuredBlog && (
-          <Link href={`/blog/${featuredBlog.slug}`} className="card group relative overflow-hidden flex flex-col sm:flex-row mb-5 block">
-            <div className="sm:w-2/5 aspect-video sm:aspect-auto relative overflow-hidden" style={{ background: "var(--bg-card-hover)", minHeight: 200 }}>
-              <div className="absolute inset-0 grad-bg opacity-30" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-7xl font-black text-white opacity-10">★</span>
-              </div>
-            </div>
-            <div className="p-8 flex flex-col justify-center gap-3 flex-1">
-              <span className="text-xs font-bold uppercase tracking-widest grad-text">Featured Post</span>
-              <h3 className="text-2xl font-black leading-snug group-hover:opacity-80 transition-opacity" style={{ color: "var(--fg)" }}>
-                {featuredBlog.title}
-              </h3>
-              <p className="text-sm leading-relaxed" style={{ color: "var(--fg-muted)" }}>{featuredBlog.excerpt}</p>
-              <div className="flex items-center gap-4 text-xs" style={{ color: "var(--fg-muted)" }}>
-                <span>{featuredBlog.date}</span>
-                <span className="flex items-center gap-1"><Clock size={11} /> {featuredBlog.readTime}</span>
-              </div>
-            </div>
-          </Link>
-        )}
-
         <div className="grid gap-5 lg:grid-cols-3">
-          {(restBlogs as any[]).slice(0, 3).map((blog, i) => {
+          {blogs.slice(0, 3).map((blog: any) => {
             const href = `/blog/${blog.slug}`;
-            const date = isStaticBlog ? blog.date : blog.createdAt?.toDate?.() ? new Date(blog.createdAt.toDate()).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Just now";
+            const date = blog.createdAt ? formatDate(blog.createdAt) : "Just now";
             return (
               <article key={blog.id} className="card group relative p-6 flex flex-col gap-3 overflow-hidden">
                 <div className="pointer-events-none absolute -top-10 -right-10 w-32 h-32 rounded-full blur-2xl opacity-0 group-hover:opacity-20 transition-opacity grad-bg" />
                 <div className="flex items-center justify-between">
                   <time className="text-xs" style={{ color: "var(--fg-muted)" }}>{date}</time>
-                  {isStaticBlog && blog.readTime && (
-                    <span className="flex items-center gap-1 text-xs" style={{ color: "var(--fg-muted)" }}>
-                      <Clock size={10} /> {blog.readTime}
-                    </span>
-                  )}
                 </div>
                 <h3 className="text-lg font-bold leading-snug" style={{ color: "var(--fg)" }}>
                   <Link href={href}><span className="absolute inset-0" />{blog.title}</Link>
@@ -312,12 +283,10 @@ export default async function HomePage() {
           <h2 className="text-4xl font-black tracking-tight" style={{ color: "var(--fg)" }}>Career Timeline</h2>
         </div>
         <div className="relative pl-8">
-          {/* vertical line */}
           <div className="absolute left-2.5 top-0 bottom-0 w-px" style={{ background: "var(--border)" }} />
           <div className="space-y-10">
             {timeline.map(({ year, title, desc }, i) => (
               <div key={i} className="relative">
-                {/* dot */}
                 <div className="absolute -left-8 top-1 w-4 h-4 rounded-full grad-bg flex items-center justify-center">
                   <div className="w-1.5 h-1.5 rounded-full bg-white" />
                 </div>

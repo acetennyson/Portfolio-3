@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 :root {
   --bg: #06060a;
   --bg-card: #0f0f17;
@@ -12,6 +14,22 @@
   --grad-end: #3b82f6;
   --grad-alt-start: #ec4899;
   --grad-alt-end: #8b5cf6;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f0f0f7;
+    --bg-card: #ffffff;
+    --bg-card-hover: #e8e8f2;
+    --border: rgba(0,0,0,0.08);
+    --fg: #0a0a12;
+    --fg-muted: #5a5a7a;
+    --accent: #7c3aed;
+    --grad-start: #7c3aed;
+    --grad-end: #2563eb;
+    --grad-alt-start: #db2777;
+    --grad-alt-end: #7c3aed;
+  }
 }
 
 [data-theme="light"] {

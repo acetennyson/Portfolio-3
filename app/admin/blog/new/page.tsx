@@ -11,6 +11,9 @@ export default function NewBlogPage() {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+  const [coverImage, setCoverImage] = useState("");
+  const [tags, setTags] = useState("");
   const [content, setContent] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -19,13 +22,16 @@ export default function NewBlogPage() {
       alert("Please ensure title, slug, and content are filled.");
       return;
     }
-
     setIsSaving(true);
     try {
       await createBlog({
         title,
         slug,
-        content
+        excerpt,
+        coverImage: coverImage || null,
+        tags: tags.split(",").map(t => t.trim()).filter(Boolean),
+        content,
+        published: true,
       });
       alert("Blog post published successfully!");
       router.push("/admin");
@@ -59,7 +65,6 @@ export default function NewBlogPage() {
               value={title}
               onChange={(e) => {
                 setTitle(e.target.value);
-                // Auto-generate slug if it's empty
                 if (!slug) {
                   setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''));
                 }
@@ -77,15 +82,44 @@ export default function NewBlogPage() {
           </div>
         </div>
 
+        <div className="space-y-2">
+          <label htmlFor="excerpt" className="text-sm font-medium text-gray-700">Excerpt</label>
+          <textarea
+            id="excerpt"
+            placeholder="A short description for the blog card..."
+            value={excerpt}
+            onChange={(e) => setExcerpt(e.target.value)}
+            rows={3}
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <div className="flex gap-4">
+          <div className="flex-1 space-y-2">
+            <label htmlFor="coverImage" className="text-sm font-medium text-gray-700">Cover Image URL</label>
+            <Input
+              id="coverImage"
+              placeholder="https://images.unsplash.com/..."
+              value={coverImage}
+              onChange={(e) => setCoverImage(e.target.value)}
+            />
+          </div>
+          <div className="flex-1 space-y-2">
+            <label htmlFor="tags" className="text-sm font-medium text-gray-700">Tags (comma-separated)</label>
+            <Input
+              id="tags"
+              placeholder="Next.js, React, TypeScript"
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
+            />
+          </div>
+        </div>
+
         <div className="bg-white border rounded-xl shadow-sm overflow-hidden">
           <div className="p-4 border-b bg-gray-50">
             <span className="text-sm font-semibold text-gray-700">Post Content</span>
           </div>
-          <Editor
-            onChange={(data) => {
-              setContent(data);
-            }}
-          />
+          <Editor onChange={(data) => setContent(data)} />
         </div>
       </section>
     </div>

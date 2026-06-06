@@ -2,15 +2,24 @@ import { collection, doc, getDoc, getDocs, setDoc, query, where, orderBy, server
 import { db } from "./config";
 
 // --- BLOGS ---
+const BLOG_AUTHOR_ID = "pnH2DUGqpMSecIihxqWfSv8kbDV2";
+
 export async function getBlogs() {
   try {
     const blogsCol = collection(db, "blogs");
-    const q = query(blogsCol, orderBy("createdAt", "desc"));
+    const q = query(blogsCol, where("authorId", "==", BLOG_AUTHOR_ID), orderBy("createdAt", "desc"));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
-    console.error("Error fetching blogs:", error);
-    return [];
+    // fallback: fetch all and filter in-memory
+    try {
+      const blogsCol = collection(db, "blogs");
+      const q = query(blogsCol, orderBy("createdAt", "desc"));
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(b => b.authorId === BLOG_AUTHOR_ID);
+    } catch {
+      return [];
+    }
   }
 }
 

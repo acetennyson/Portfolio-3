@@ -10,10 +10,12 @@ export default function ManageProjectsPage() {
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // New Project Form State
-  const [name, setName] = useState("");
-  const [status, setStatus] = useState("live");
-  const [image, setImage] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [coverImage, setCoverImage] = useState("");
+  const [technologies, setTechnologies] = useState("");
+  const [liveUrl, setLiveUrl] = useState("");
+  const [featured, setFeatured] = useState(false);
 
   const fetchProjects = async () => {
     setLoading(true);
@@ -35,13 +37,22 @@ export default function ManageProjectsPage() {
 
   const handleAddProject = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name) return;
-
+    if (!title) return;
     try {
-      await addProject({ name, status, image });
-      setName("");
-      setImage("");
-      setStatus("live");
+      await addProject({
+        title,
+        description,
+        coverImage: coverImage || null,
+        technologies: technologies.split(",").map(t => t.trim()).filter(Boolean),
+        liveUrl: liveUrl || null,
+        featured,
+      });
+      setTitle("");
+      setDescription("");
+      setCoverImage("");
+      setTechnologies("");
+      setLiveUrl("");
+      setFeatured(false);
       fetchProjects();
       alert("Project added!");
     } catch (err) {
@@ -59,34 +70,42 @@ export default function ManageProjectsPage() {
 
       <section className="bg-white p-6 rounded-xl border shadow-sm">
         <h2 className="text-xl font-semibold mb-4">Add New Project</h2>
-        <form onSubmit={handleAddProject} className="flex items-end gap-4 flex-wrap">
-          <div className="flex-1 min-w-[200px] space-y-2">
-            <label className="text-sm font-medium">Project Name</label>
-            <input 
-              className="w-full flex h-10 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" 
-              value={name} onChange={e => setName(e.target.value)} placeholder="e.g. NextJS Portfolio" required 
-            />
+        <form onSubmit={handleAddProject} className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Title</label>
+              <input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. NextJS Portfolio" required
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Cover Image URL</label>
+              <input value={coverImage} onChange={e => setCoverImage(e.target.value)} placeholder="https://..."
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Live URL</label>
+              <input value={liveUrl} onChange={e => setLiveUrl(e.target.value)} placeholder="https://..."
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Technologies (comma-separated)</label>
+              <input value={technologies} onChange={e => setTechnologies(e.target.value)} placeholder="React, Node.js, TypeScript"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <label className="text-sm font-medium">Description</label>
+              <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Project description..." rows={3}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div className="flex items-center gap-2">
+              <input type="checkbox" id="featured" checked={featured} onChange={e => setFeatured(e.target.checked)}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+              <label htmlFor="featured" className="text-sm font-medium">Featured project</label>
+            </div>
           </div>
-          <div className="flex-1 min-w-[200px] space-y-2">
-            <label className="text-sm font-medium">Status</label>
-            <select 
-              className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={status} onChange={e => setStatus(e.target.value)}
-            >
-              <option value="live">Live</option>
-              <option value="pending">Pending</option>
-              <option value="upcoming">Upcoming</option>
-              <option value="update">Update</option>
-            </select>
+          <div className="flex justify-end">
+            <Button type="submit">Add Project</Button>
           </div>
-          <div className="flex-1 min-w-[200px] space-y-2">
-            <label className="text-sm font-medium">Image URL</label>
-            <input 
-              className="w-full flex h-10 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" 
-              value={image} onChange={e => setImage(e.target.value)} placeholder="https://..." 
-            />
-          </div>
-          <Button type="submit">Add</Button>
         </form>
       </section>
 
@@ -102,19 +121,29 @@ export default function ManageProjectsPage() {
                <table className="w-full text-sm text-left">
                  <thead className="bg-gray-50 text-gray-700 font-medium">
                    <tr>
-                     <th className="px-4 py-3 rounded-tl-lg">Project Name</th>
-                     <th className="px-4 py-3">Status</th>
+                     <th className="px-4 py-3 rounded-tl-lg">Project</th>
+                     <th className="px-4 py-3">Technologies</th>
+                     <th className="px-4 py-3">Featured</th>
                      <th className="px-4 py-3 rounded-tr-lg">Actions</th>
                    </tr>
                  </thead>
                  <tbody>
                    {projects.map((p) => (
                      <tr key={p.id} className="border-b last:border-0 hover:bg-gray-50 transition-colors">
-                       <td className="px-4 py-3 font-medium text-gray-900">{p.name}</td>
+                       <td className="px-4 py-3 font-medium text-gray-900">{p.title}</td>
                        <td className="px-4 py-3">
-                         <span className="capitalize px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700 font-medium">
-                           {p.status}
-                         </span>
+                         <div className="flex flex-wrap gap-1">
+                           {(p.technologies || []).slice(0, 3).map((t: string) => (
+                             <span key={t} className="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-600">{t}</span>
+                           ))}
+                         </div>
+                       </td>
+                       <td className="px-4 py-3">
+                         {p.featured ? (
+                           <span className="text-xs rounded-full bg-blue-100 text-blue-700 font-medium px-2 py-1">Featured</span>
+                         ) : (
+                           <span className="text-xs text-gray-400">—</span>
+                         )}
                        </td>
                        <td className="px-4 py-3">
                          <span className="text-gray-400 text-xs cursor-not-allowed">Edit/Delete Coming Soon</span>
