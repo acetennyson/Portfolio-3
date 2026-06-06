@@ -8,6 +8,7 @@ const tools = [
   { name: "Compass", desc: "Real-time compass using device orientation.", href: "/tools/compass", emoji: "🧭" },
   { name: "Universal Converter", desc: "Currency, length, weight, temperature, time & more.", href: "/tools/converter", emoji: "🔄" },
   { name: "World Clock", desc: "Multiple timezones with analog, digital, minimal & neon styles.", href: "/tools/world-clock", emoji: "🕐" },
+  { name: "BMI Tracker", desc: "Calculate BMI with gauge, healthy range & health tips.", href: "/tools/bmi", emoji: "⚖️" },
 ];
 
 export default function ToolsPage() {
