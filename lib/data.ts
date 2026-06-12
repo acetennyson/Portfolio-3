@@ -3,7 +3,7 @@ export const siteConfig = {
   title: "Full-Stack Developer & Designer",
   tagline: "I Build Things\nPeople Love",
   bio: "Designer & developer crafting high-performance digital products. From concept to deployment — I make it real.",
-  email: "alex@example.com",
+  email: "danybeloved@gmail.com",
   avatar: "https://z-p3-scontent.fdla2-1.fna.fbcdn.net/v/t39.30808-6/394442680_122106512000075496_1205902345219896500_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=1d70fc&_nc_eui2=AeFqjaTu824bKsFLadAlFzPXEs6aqHnIHvkSzpqoecge-bpGaA8V2sK8vWgrGAcllXZ01eDsbFfwQZiyWXQA9XF9&_nc_ohc=VMSscoBf9iYQ7kNvwFXvhSh&_nc_oc=Adomy1aHJUaQKeBivzIr7Kg_fnPoERBI9KpnHoYyoqlEqnqmUCXpyzT6eMpRP3ugbXA&_nc_zt=23&_nc_ht=z-p3-scontent.fdla2-1.fna&_nc_gid=DCA1T5YwgPPTdxGPobOkUA&_nc_ss=7a32e&oh=00_AfwMm2JxAeLDafNxDJznuW2vOE7Yyv8b4Am8UOe-nRdcwQ&oe=69CDDAE7",
   social: {
     github: "https://github.com",
@@ -95,21 +95,21 @@ export const process = [
 export const testimonials = [
   {
     id: "t1",
-    quote: "Alex delivered a product that exceeded every expectation. The attention to detail in both design and code is rare.",
+    quote: "Daniel delivered a product that exceeded every expectation. The attention to detail in both design and code is rare.",
     name: "Sarah Chen",
     role: "CTO at Luminary",
     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&q=80",
   },
   {
     id: "t2",
-    quote: "Working with Alex felt like having a co-founder. Fast, communicative, and the output was stunning.",
+    quote: "Working with Daniel felt like having a co-founder. Fast, communicative, and the output was stunning.",
     name: "Marcus Webb",
     role: "Founder at Orbit",
     avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&q=80",
   },
   {
     id: "t3",
-    quote: "The design system Alex built saved our team hundreds of hours. It's the backbone of everything we ship.",
+    quote: "The design system Daniel built saved our team hundreds of hours. It's the backbone of everything we ship.",
     name: "Priya Nair",
     role: "Head of Product at Pulse",
     avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&q=80",
