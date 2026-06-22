@@ -4,7 +4,7 @@ export const siteConfig = {
   tagline: "I Build Things\nPeople Love",
   bio: "Designer & developer crafting high-performance digital products. From concept to deployment — I make it real.",
   email: "danybeloved@gmail.com",
-  avatar: "https://z-p3-scontent.fdla2-1.fna.fbcdn.net/v/t39.30808-6/394442680_122106512000075496_1205902345219896500_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=1d70fc&_nc_eui2=AeFqjaTu824bKsFLadAlFzPXEs6aqHnIHvkSzpqoecge-bpGaA8V2sK8vWgrGAcllXZ01eDsbFfwQZiyWXQA9XF9&_nc_ohc=VMSscoBf9iYQ7kNvwFXvhSh&_nc_oc=Adomy1aHJUaQKeBivzIr7Kg_fnPoERBI9KpnHoYyoqlEqnqmUCXpyzT6eMpRP3ugbXA&_nc_zt=23&_nc_ht=z-p3-scontent.fdla2-1.fna&_nc_gid=DCA1T5YwgPPTdxGPobOkUA&_nc_ss=7a32e&oh=00_AfwMm2JxAeLDafNxDJznuW2vOE7Yyv8b4Am8UOe-nRdcwQ&oe=69CDDAE7",
+  avatar: "https://scontent-los4-1.xx.fbcdn.net/v/t39.30808-1/671876161_1511922483856485_4280946337718525779_n.jpg?stp=dst-jpg_tt6&cstp=mx720x720&ctp=s480x480&_nc_cat=108&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeGun_HMyrDSSWFxj1zuZ-73LY4_C-IRhdgtjj8L4hGF2Pd9K9uuai_jsH2kShAm3t7Jr0ac60fwPNFjRDidpzfX&_nc_ohc=co0o_KpR0sYQ7kNvwG0ZaFo&_nc_oc=AdpxrgkB9qA-6MiylNG3zFy1gHX888rseY2ufJQTidfmrcdgccOfVYuh7yni-7ON184&_nc_zt=24&_nc_ht=scontent-los4-1.xx&_nc_gid=WPFsVgf0EAMJJOUIx-rYEQ&_nc_ss=7b2a8&oh=00_Af-ErsjXzyJkD3bJi2MhFBGqvFvuCY2xuKvcTSvJuJZiqw&oe=6A3EF874",
   social: {
     github: "https://github.com",
     twitter: "https://twitter.com",
