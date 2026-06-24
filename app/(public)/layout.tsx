@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import ThemeToggle from "../../components/ThemeToggle";
-import { GithubIcon, TwitterIcon, LinkedinIcon } from "../../components/SocialIcons";
+import { GithubIcon, TwitterIcon, LinkedinIcon, FacebookIcon, DevtoIcon, } from "../../components/SocialIcons";
 import { siteConfig } from "../../lib/data";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
@@ -45,6 +45,8 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                 { href: siteConfig.social.github, icon: <GithubIcon size={16} /> },
                 { href: siteConfig.social.twitter, icon: <TwitterIcon size={16} /> },
                 { href: siteConfig.social.linkedin, icon: <LinkedinIcon size={16} /> },
+                { href: siteConfig.social.facebook, icon: <FacebookIcon size={16} /> },
+                { href: siteConfig.social.dev, icon: <DevtoIcon size={16} /> },
               ].map(({ href, icon }) => (
                 <a key={href} href={href} target="_blank" rel="noopener noreferrer"
                   className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 hover:border-violet-500"

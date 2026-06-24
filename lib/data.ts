@@ -6,9 +6,11 @@ export const siteConfig = {
   email: "danybeloved@gmail.com",
   avatar: "https://scontent-los4-1.xx.fbcdn.net/v/t39.30808-1/671876161_1511922483856485_4280946337718525779_n.jpg?stp=dst-jpg_tt6&cstp=mx720x720&ctp=s480x480&_nc_cat=108&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeGun_HMyrDSSWFxj1zuZ-73LY4_C-IRhdgtjj8L4hGF2Pd9K9uuai_jsH2kShAm3t7Jr0ac60fwPNFjRDidpzfX&_nc_ohc=co0o_KpR0sYQ7kNvwG0ZaFo&_nc_oc=AdpxrgkB9qA-6MiylNG3zFy1gHX888rseY2ufJQTidfmrcdgccOfVYuh7yni-7ON184&_nc_zt=24&_nc_ht=scontent-los4-1.xx&_nc_gid=WPFsVgf0EAMJJOUIx-rYEQ&_nc_ss=7b2a8&oh=00_Af-ErsjXzyJkD3bJi2MhFBGqvFvuCY2xuKvcTSvJuJZiqw&oe=6A3EF874",
   social: {
-    github: "https://github.com",
-    twitter: "https://twitter.com",
-    linkedin: "https://linkedin.com",
+    github: "https://github.com/acetennyson",
+    twitter: "https://x.com/AdoNj84371",
+    linkedin: "https://www.linkedin.com/in/iamsupreme/",
+    facebook: "https://www.facebook.com/iamsupreme0",
+    dev: "https://dev.to/adodanieln",
   },
   stats: [
     { value: "12+", label: "Projects Shipped" },

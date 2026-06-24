@@ -3,7 +3,7 @@ import { getBlogs, getProjects } from "../../firebase/firestore";
 import { siteConfig, staticProjects, staticBlogs, skills, process, testimonials, timeline, currentlyBuilding, roles } from "../../lib/data";
 import { ArrowRight, ExternalLink, Clock, Star } from "lucide-react";
 import TypingRole from "../../components/TypingRole";
-import { GithubIcon, TwitterIcon, LinkedinIcon } from "../../components/SocialIcons";
+import { GithubIcon, TwitterIcon, LinkedinIcon, FacebookIcon, DevtoIcon } from "../../components/SocialIcons";
 
 export const revalidate = 60;
 
@@ -74,6 +74,8 @@ export default async function HomePage() {
             { href: siteConfig.social.github, icon: <GithubIcon size={17} /> },
             { href: siteConfig.social.twitter, icon: <TwitterIcon size={17} /> },
             { href: siteConfig.social.linkedin, icon: <LinkedinIcon size={17} /> },
+            { href: siteConfig.social.facebook, icon: <FacebookIcon size={17} /> },
+            { href: siteConfig.social.dev, icon: <DevtoIcon size={17} /> },
           ].map(({ href, icon }) => (
             <a key={href} href={href} target="_blank" rel="noopener noreferrer"
               className="flex items-center justify-center w-9 h-9 rounded-full transition-all hover:border-violet-500 hover:scale-110"
@@ -306,10 +308,10 @@ export default async function HomePage() {
           style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")" }} />
         <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full blur-3xl opacity-30 bg-white" />
         <div className="relative z-10">
-          <p className="text-white/70 text-sm font-semibold uppercase tracking-widest mb-4">Let's collaborate</p>
+          <p className="text-white/70 text-sm font-semibold uppercase tracking-widest mb-4">Let&apos;s collaborate</p>
           <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tight mb-4">Got a project in mind?</h2>
           <p className="text-white/70 text-base mb-10 max-w-md mx-auto">
-            I'm always open to new opportunities, creative ideas, or just a good chat.
+            I&apos;m always open to new opportunities, creative ideas, or just a good chat.
           </p>
           <a href={`mailto:${siteConfig.email}`}
             className="inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-sm font-bold transition-all hover:scale-105"
