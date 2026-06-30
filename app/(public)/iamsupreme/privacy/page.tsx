@@ -6,7 +6,7 @@ export const metadata: Metadata = {
     "Privacy Policy for the WhatsApp chatbot application built and operated by Ado Daniel.",
 };
 
-const APP_NAME = "Ado Daniel WhatsApp Bot"; // TODO: replace with your actual app name
+const APP_NAME = "IAmSupreme Patrol"; // TODO: replace with your actual app name
 const CONTACT_EMAIL = "iamsupremedevelopers@example.com"; // TODO: replace with your real contact email
 const LAST_UPDATED = "June 30, 2026";
 
