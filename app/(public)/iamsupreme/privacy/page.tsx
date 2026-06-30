@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 
 const APP_NAME = "Ado Daniel WhatsApp Bot"; // TODO: replace with your actual app name
-const CONTACT_EMAIL = "your-email@example.com"; // TODO: replace with your real contact email
+const CONTACT_EMAIL = "iamsupremedevelopers@example.com"; // TODO: replace with your real contact email
 const LAST_UPDATED = "June 30, 2026";
 
 export default function PrivacyPolicyPage() {
