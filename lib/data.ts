@@ -97,24 +97,15 @@ export const process = [
 export const testimonials = [
   {
     id: "t1",
-    quote: "Daniel delivered a product that exceeded every expectation. The attention to detail in both design and code is rare.",
-    name: "Sarah Chen",
-    role: "CTO at Luminary",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&q=80",
+    quote: "Attention to detail in both design and code that's rare to find in a single person.",
   },
   {
     id: "t2",
-    quote: "Working with Daniel felt like having a co-founder. Fast, communicative, and the output was stunning.",
-    name: "Marcus Webb",
-    role: "Founder at Orbit",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&q=80",
+    quote: "Feels like having a co-founder on the build — fast, communicative, and the output speaks for itself.",
   },
   {
     id: "t3",
-    quote: "The design system Daniel built saved our team hundreds of hours. It's the backbone of everything we ship.",
-    name: "Priya Nair",
-    role: "Head of Product at Pulse",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&q=80",
+    quote: "Design systems built to last, saving teams hundreds of hours down the line.",
   },
 ];
 

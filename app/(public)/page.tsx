@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getBlogs, getProjects } from "../../firebase/firestore";
 import { siteConfig, staticProjects, staticBlogs, skills, process, testimonials, timeline, currentlyBuilding, roles } from "../../lib/data";
-import { ArrowRight, ExternalLink, Clock, Star } from "lucide-react";
+import { ArrowRight, ExternalLink, Clock } from "lucide-react";
 import TypingRole from "../../components/TypingRole";
 import { GithubIcon, TwitterIcon, LinkedinIcon, FacebookIcon, DevtoIcon } from "../../components/SocialIcons";
 
@@ -213,28 +213,16 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ── */}
+      {/* ── HIGHLIGHTS ── */}
       <section>
         <div className="text-center mb-12">
-          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "var(--accent)" }}>Social Proof</p>
-          <h2 className="text-4xl font-black tracking-tight" style={{ color: "var(--fg)" }}>What People Say</h2>
+          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "var(--accent)" }}>Working Together</p>
+          <h2 className="text-4xl font-black tracking-tight" style={{ color: "var(--fg)" }}>What to Expect</h2>
         </div>
         <div className="grid gap-5 sm:grid-cols-3">
-          {testimonials.map(({ id, quote, name, role, avatar }) => (
+          {testimonials.map(({ id, quote }) => (
             <div key={id} className="card p-6 flex flex-col gap-4">
-              <div className="flex gap-0.5">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} size={13} fill="currentColor" style={{ color: "var(--accent)" }} />
-                ))}
-              </div>
-              <p className="text-sm leading-relaxed flex-1" style={{ color: "var(--fg-muted)" }}>&ldquo;{quote}&rdquo;</p>
-              <div className="flex items-center gap-3 pt-2" style={{ borderTop: "1px solid var(--border)" }}>
-                <img src={avatar} alt={name} className="w-9 h-9 rounded-full object-cover" />
-                <div>
-                  <p className="text-sm font-bold" style={{ color: "var(--fg)" }}>{name}</p>
-                  <p className="text-xs" style={{ color: "var(--fg-muted)" }}>{role}</p>
-                </div>
-              </div>
+              <p className="text-sm leading-relaxed flex-1" style={{ color: "var(--fg-muted)" }}>{quote}</p>
             </div>
           ))}
         </div>
