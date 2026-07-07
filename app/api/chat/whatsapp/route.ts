@@ -72,14 +72,31 @@ export async function GET(request: NextRequest) {
   const mode = searchParams.get('hub.mode')
   const token = searchParams.get('hub.verify_token')
   const challenge = searchParams.get('hub.challenge')
+  const fullUrl = request.url
 
   const verifyToken = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN
 
+  console.log('[WHATSAPP_GET]', {
+    fullUrl,
+    mode,
+    token,
+    challenge,
+    verifyToken,
+    allParams: Object.fromEntries(searchParams.entries()),
+  })
+
   if (mode === 'subscribe' && token === verifyToken && challenge) {
+    console.log('[WHATSAPP_GET] Verification successful')
     return new Response(challenge, { status: 200 })
   }
 
-  return new Response('Verification failed', { status: 403 })
+  console.log('[WHATSAPP_GET] Verification failed', {
+    modeMatch: mode === 'subscribe',
+    tokenMatch: token === verifyToken,
+    hasChallenge: !!challenge,
+  })
+
+  return new Response(`Verification failed. mode=${mode} token=${token} challenge=${challenge}`, { status: 403 })
 }
 
 export async function POST(request: NextRequest) {
