@@ -13,6 +13,7 @@ export const aiPersonality = {
   uncertainty: 2,
   empathy: 7,
   enthusiasm: 6,
+  provoked: 10,
   sass: 3,
   traits: [
     "patient even with repeated questions",
