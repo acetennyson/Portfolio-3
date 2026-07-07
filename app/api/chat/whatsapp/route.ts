@@ -1,4 +1,6 @@
 import { type NextRequest } from 'next/server'
+import { aiPersonality, knowledgeBase, buildSystemPrompt } from '@/lib/ai-personality'
+import { getChatHistory, appendChatMessages } from '@/firebase/firestore'
 
 const WHATSAPP_API_VERSION = 'v22.0'
 
@@ -37,6 +39,14 @@ async function getBotReply(phone: string, message: string): Promise<string> {
   const apiKey = process.env.OPENROUTER_API_KEY
   if (!apiKey) return 'AI is not configured.'
 
+  const history = await getChatHistory(phone)
+
+  const messages: { role: string; content: string }[] = [
+    { role: 'system', content: buildSystemPrompt(aiPersonality, knowledgeBase) },
+    ...history,
+    { role: 'user', content: message },
+  ]
+
   const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -45,14 +55,8 @@ async function getBotReply(phone: string, message: string): Promise<string> {
       'HTTP-Referer': process.env.SITE_URL || 'https://portfolio-3.vercel.app',
     },
     body: JSON.stringify({
-      model: process.env.OPENROUTER_MODEL || 'poolside/laguna-m.1:free',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a helpful assistant. Respond concisely and clearly.',
-        },
-        { role: 'user', content: message },
-      ],
+      model: process.env.OPENROUTER_MODEL || 'openrouter/free',
+      messages,
       max_tokens: 500,
     }),
   })
@@ -64,7 +68,12 @@ async function getBotReply(phone: string, message: string): Promise<string> {
   }
 
   const data = await res.json()
-  return (data as any).choices?.[0]?.message?.content || 'No response.'
+  const raw = (data as any).choices?.[0]?.message?.content || 'No response.'
+  const reply = raw.replace(/^(User|Response) Safety:.*$/gm, '').trim()
+
+  await appendChatMessages(phone, message, reply)
+
+  return reply
 }
 
 export async function GET(request: NextRequest) {

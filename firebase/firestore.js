@@ -74,3 +74,35 @@ export async function addMessage(data) {
     createdAt: serverTimestamp()
   });
 }
+
+// --- CHAT HISTORY (patrolChat) ---
+const MAX_HISTORY = 20;
+
+export async function getChatHistory(phone) {
+  try {
+    const ref = doc(db, "patrolChat", phone);
+    const snap = await getDoc(ref);
+    return snap.exists() ? snap.data().messages || [] : [];
+  } catch (error) {
+    console.error("Error fetching chat history:", error);
+    return [];
+  }
+}
+
+export async function appendChatMessages(phone, userMsg, botMsg) {
+  try {
+    const ref = doc(db, "patrolChat", phone);
+    const snap = await getDoc(ref);
+    const existing = snap.exists() ? snap.data().messages || [] : [];
+
+    const updated = [
+      ...existing,
+      { role: "user", content: userMsg, ts: Date.now() },
+      { role: "assistant", content: botMsg, ts: Date.now() },
+    ].slice(-MAX_HISTORY);
+
+    await setDoc(ref, { phone, messages: updated }, { merge: true });
+  } catch (error) {
+    console.error("Error saving chat history:", error);
+  }
+}
