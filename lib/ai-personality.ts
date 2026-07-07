@@ -1,3 +1,5 @@
+import { buildGuardrails } from "./ai/buildGuardrails"
+
 export const aiPersonality = {
   name: "IAmSupreme",
   gender: "neutral",
@@ -50,7 +52,6 @@ export const knowledgeBase = {
     stats: [
       "12+ projects shipped",
       "4+ years experience",
-      "50k+ users reached",
     ],
     skills: [
       "TypeScript",
@@ -104,10 +105,10 @@ export const knowledgeBase = {
       tech: ["Next.js", "React", "Tailwind CSS", "Firebase", "Three.js"],
     },
   ],
-  testimonials: [
-    "Daniel delivered a product that exceeded every expectation. The attention to detail in both design and code is rare. — Sarah Chen, CTO at Luminary",
-    "Working with Daniel felt like having a co-founder. Fast, communicative, and the output was stunning. — Marcus Webb, Founder at Orbit",
-    "The design system Daniel built saved our team hundreds of hours. It's the backbone of everything we ship. — Priya Nair, Head of Product at Pulse",
+  workHighlights: [
+    "Known for attention to detail — both the design and the code hold up under scrutiny.",
+    "Communicative and fast-moving throughout a build, more like an embedded collaborator than an outside contractor.",
+    "Design systems and components are built to be reused, saving teams real time down the line.",
   ],
   process: [
     { step: 1, title: "Discover", desc: "Deep dive into the problem space, user needs, and business goals." },
@@ -153,12 +154,13 @@ ${knowledge.founder.careerTimeline.map(t => `- ${t.year}: ${t.title} — ${t.des
 NOTABLE PROJECTS:
 ${knowledge.notableWork.map(p => `- ${p.name}: ${p.desc}${p.tech.length ? ` (${p.tech.join(", ")})` : ""}`).join("\n")}
 
-TESTIMONIALS:
-${knowledge.testimonials.join("\n")}
+WHAT CLIENTS TYPICALLY SAY (general themes, not direct quotes from a specific named person):
+${knowledge.workHighlights.map(h => `- ${h}`).join("\n")}
 
 PROCESS:
 ${knowledge.process.map(p => `- Step ${p.step} (${p.title}): ${p.desc}`).join("\n")}
 
 Contact: ${knowledge.company.contactEmail}
-Social: GitHub (${knowledge.company.socialLinks.github}), Twitter (${knowledge.company.socialLinks.twitter}), LinkedIn (${knowledge.company.socialLinks.linkedin}), Facebook (${knowledge.company.socialLinks.facebook}), Dev.to (${knowledge.company.socialLinks.dev})`
+Social: GitHub (${knowledge.company.socialLinks.github}), Twitter (${knowledge.company.socialLinks.twitter}), LinkedIn (${knowledge.company.socialLinks.linkedin}), Facebook (${knowledge.company.socialLinks.facebook}), Dev.to (${knowledge.company.socialLinks.dev})
+${buildGuardrails()}`
 }

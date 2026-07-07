@@ -1,6 +1,13 @@
 import { type NextRequest } from 'next/server'
 import { aiPersonality, knowledgeBase, buildSystemPrompt } from '@/lib/ai-personality'
 import { getChatHistory, appendChatMessages } from '@/firebase/firestore'
+import { isAuthenticWebhookPayload } from '@/lib/whatsapp/verifyWebhook'
+import { checkRateLimit } from '@/lib/whatsapp/checkRateLimit'
+import { isDuplicateMessage } from '@/lib/whatsapp/checkDuplicate'
+import { sanitizeReply } from '@/lib/ai/sanitizeReply'
+import { resolveModel } from '@/lib/ai/resolveModel'
+import { clampInput } from '@/lib/ai/clampInput'
+import { constantTimeEquals } from '@/lib/whatsapp/signature'
 
 const WHATSAPP_API_VERSION = 'v22.0'
 
@@ -55,7 +62,7 @@ async function getBotReply(phone: string, message: string): Promise<string> {
       'HTTP-Referer': process.env.SITE_URL || 'https://portfolio-3.vercel.app',
     },
     body: JSON.stringify({
-      model: process.env.OPENROUTER_MODEL || 'openrouter/free',
+      model: resolveModel(process.env.OPENROUTER_MODEL),
       messages,
       max_tokens: 500,
     }),
@@ -69,7 +76,7 @@ async function getBotReply(phone: string, message: string): Promise<string> {
 
   const data = await res.json()
   const raw = (data as any).choices?.[0]?.message?.content || 'No response.'
-  const reply = raw.replace(/^(User|Response) Safety:.*$/gm, '').trim()
+  const reply = sanitizeReply(raw)
 
   await appendChatMessages(phone, message, reply)
 
@@ -94,14 +101,16 @@ export async function GET(request: NextRequest) {
     allParams: Object.fromEntries(searchParams.entries()),
   })
 
-  if (mode === 'subscribe' && token === verifyToken && challenge) {
+  const tokenMatches = !!token && !!verifyToken && constantTimeEquals(token, verifyToken)
+
+  if (mode === 'subscribe' && tokenMatches && challenge) {
     console.log('[WHATSAPP_GET] Verification successful')
     return new Response(challenge, { status: 200 })
   }
 
   console.log('[WHATSAPP_GET] Verification failed', {
     modeMatch: mode === 'subscribe',
-    tokenMatch: token === verifyToken,
+    tokenMatch: tokenMatches,
     hasChallenge: !!challenge,
   })
 
@@ -110,7 +119,16 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
+    // Signature check runs on the raw body — must read text() before json().
+    const rawBody = await request.text()
+    const signatureHeader = request.headers.get('x-hub-signature-256')
+
+    if (!isAuthenticWebhookPayload(rawBody, signatureHeader, process.env.WHATSAPP_APP_SECRET)) {
+      console.error('[WHATSAPP_POST] Signature verification failed')
+      return Response.json({ status: 'error', message: 'Invalid signature' }, { status: 401 })
+    }
+
+    const body = JSON.parse(rawBody)
 
     const entry = body?.entry?.[0]?.changes?.[0]?.value
     const messages = entry?.messages
@@ -122,12 +140,24 @@ export async function POST(request: NextRequest) {
     const msg = messages[0]
     const from = msg.from
     const text = msg.text?.body
+    const messageId = msg.id
 
     if (!from || !text) {
       return Response.json({ status: 'ok' }, { status: 200 })
     }
 
-    const reply = await getBotReply(from, text)
+    if (messageId && (await isDuplicateMessage(messageId))) {
+      console.log('[WHATSAPP_POST] Duplicate message, skipping', { messageId })
+      return Response.json({ status: 'ok' }, { status: 200 })
+    }
+
+    if (!(await checkRateLimit(from))) {
+      console.log('[WHATSAPP_POST] Rate limit exceeded', { from })
+      await sendWhatsAppMessage(from, "You're sending messages a bit fast — give me a moment 🙂")
+      return Response.json({ status: 'ok' }, { status: 200 })
+    }
+
+    const reply = await getBotReply(from, clampInput(text))
     await sendWhatsAppMessage(from, reply)
 
     return Response.json({ status: 'ok' }, { status: 200 })
