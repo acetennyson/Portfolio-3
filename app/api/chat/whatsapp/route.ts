@@ -45,7 +45,7 @@ async function getBotReply(phone: string, message: string): Promise<string> {
       'HTTP-Referer': process.env.SITE_URL || 'https://portfolio-3.vercel.app',
     },
     body: JSON.stringify({
-      model: process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini',
+      model: process.env.OPENROUTER_MODEL || 'poolside/laguna-m.1:free',
       messages: [
         {
           role: 'system',
