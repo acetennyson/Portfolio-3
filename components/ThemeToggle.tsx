@@ -52,7 +52,7 @@ export default function ThemeToggle() {
           title={value}
           className="rounded-full p-1.5 transition-all duration-200"
           style={theme === value
-            ? { background: "linear-gradient(135deg, var(--grad-start), var(--grad-end))", color: "#fff" }
+            ? { background: "var(--accent)", color: "#0c0c0d" }
             : { background: "transparent", color: "var(--fg-muted)" }
           }
         >

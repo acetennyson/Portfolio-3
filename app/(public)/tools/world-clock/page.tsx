@@ -488,7 +488,7 @@ export default function WorldClock() {
           return <ClockCard key={tz} entry={entry} style={style} onRemove={() => setClocks(c => c.filter(x => x !== tz))}/>;
         })}
         <button onClick={() => setAdding(true)}
-          className="card flex flex-col items-center justify-center gap-2 min-h-[200px] transition-all hover:border-violet-500"
+          className="card flex flex-col items-center justify-center gap-2 min-h-[200px] transition-all hover:border-[var(--accent)]"
           style={{ borderStyle: "dashed" }}>
           <Plus size={24} style={{ color: "var(--fg-muted)" }}/>
           <span className="text-sm font-semibold" style={{ color: "var(--fg-muted)" }}>Add City</span>

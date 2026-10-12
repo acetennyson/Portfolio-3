@@ -166,7 +166,7 @@ export default function WeatherForecast() {
           Search
         </button>
         <button onClick={useMyLocation} title="Use my location"
-          className="rounded-2xl px-4 py-3 transition-all hover:border-violet-500"
+          className="rounded-2xl px-4 py-3 transition-all hover:border-[var(--accent)]"
           style={{ background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--fg-muted)" }}>
           <Navigation size={16} />
         </button>
@@ -178,7 +178,7 @@ export default function WeatherForecast() {
       {/* loading */}
       {loading && (
         <div className="card p-10 flex items-center justify-center">
-          <div className="w-8 h-8 rounded-full border-2 border-violet-500 border-t-transparent animate-spin" />
+          <div className="w-8 h-8 rounded-full border-2 border-[var(--accent)] border-t-transparent animate-spin" />
         </div>
       )}
 

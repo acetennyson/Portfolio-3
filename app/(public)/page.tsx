@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { getBlogs, getProjects } from "../../firebase/firestore";
-import { siteConfig, staticProjects, staticBlogs, skills, process, testimonials, timeline, currentlyBuilding, roles } from "../../lib/data";
+import { siteConfig, staticProjects, staticBlogs, process, testimonials, timeline, currentlyBuilding } from "../../lib/data";
 import { ArrowRight, ExternalLink, Clock } from "lucide-react";
-import TypingRole from "../../components/TypingRole";
-import { GithubIcon, TwitterIcon, LinkedinIcon, FacebookIcon, DevtoIcon } from "../../components/SocialIcons";
+import Hero from "../../components/shell/Hero";
 
 export const revalidate = 60;
 
@@ -24,86 +23,9 @@ export default async function HomePage() {
   const blogs = liveBlogs.length ? liveBlogs.slice(0, 4) : staticBlogs;
 
   return (
-    <div className="space-y-32 pb-20">
-
-      {/* ── HERO ── */}
-      <section className="relative min-h-[90vh] flex flex-col items-center justify-center text-center overflow-hidden pt-10 pb-20">
-        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full blur-[140px] opacity-20 grad-bg" />
-          <div className="absolute top-1/3 -right-40 w-[500px] h-[500px] rounded-full blur-[100px] opacity-10 grad-alt-bg" />
-          <div className="absolute bottom-0 -left-20 w-[400px] h-[400px] rounded-full blur-[100px] opacity-10" style={{ background: "var(--grad-end)" }} />
-        </div>
-
-        <div className="mb-6 relative">
-          <div className="w-20 h-20 rounded-full p-0.5 grad-bg">
-            <img src={siteConfig.avatar} alt={siteConfig.name} className="w-full h-full rounded-full object-cover" />
-          </div>
-          <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-green-500 border-2" style={{ borderColor: "var(--bg)" }} />
-        </div>
-
-        <p className="mb-3 text-sm font-semibold" style={{ color: "var(--fg-muted)" }}>{siteConfig.name}</p>
-
-        <h1 className="text-6xl sm:text-8xl font-black tracking-tighter leading-[0.9] mb-5">
-          I Build Things<br />
-          <span className="grad-text">People Love</span>
-        </h1>
-
-        <p className="text-xl font-semibold mb-6 h-8">
-          <TypingRole roles={roles} />
-        </p>
-
-        <p className="max-w-md text-base leading-relaxed mb-10" style={{ color: "var(--fg-muted)" }}>
-          {siteConfig.bio}
-        </p>
-
-        <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
-          <Link href="/projects"
-            className="btn-grad inline-flex items-center gap-2 rounded-full px-7 py-3 text-sm font-bold transition-opacity hover:opacity-90"
-            style={{ boxShadow: "0 8px 32px rgba(139,92,246,0.35)" }}>
-            See My Work <ArrowRight size={15} />
-          </Link>
-          <a href={`mailto:${siteConfig.email}`}
-            className="inline-flex items-center gap-2 rounded-full px-7 py-3 text-sm font-bold transition-all hover:border-violet-500"
-            style={{ background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--fg)" }}>
-            Get in Touch
-          </a>
-        </div>
-
-        <div className="flex items-center gap-3 mb-14">
-          {[
-            { href: siteConfig.social.github, icon: <GithubIcon size={17} /> },
-            { href: siteConfig.social.twitter, icon: <TwitterIcon size={17} /> },
-            { href: siteConfig.social.linkedin, icon: <LinkedinIcon size={17} /> },
-            { href: siteConfig.social.facebook, icon: <FacebookIcon size={17} /> },
-            { href: siteConfig.social.dev, icon: <DevtoIcon size={17} /> },
-          ].map(({ href, icon }) => (
-            <a key={href} href={href} target="_blank" rel="noopener noreferrer"
-              className="flex items-center justify-center w-9 h-9 rounded-full transition-all hover:border-violet-500 hover:scale-110"
-              style={{ background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--fg-muted)" }}>
-              {icon}
-            </a>
-          ))}
-        </div>
-
-        <div className="flex flex-wrap justify-center gap-4 mb-10">
-          {siteConfig.stats.map(({ value, label }) => (
-            <div key={label} className="rounded-2xl px-6 py-4 text-center"
-              style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
-              <div className="text-3xl font-black grad-text">{value}</div>
-              <div className="text-xs mt-1" style={{ color: "var(--fg-muted)" }}>{label}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex flex-wrap justify-center gap-2">
-          {skills.map(s => (
-            <span key={s} className="rounded-full px-3 py-1 text-xs font-medium"
-              style={{ background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--fg-muted)" }}>
-              {s}
-            </span>
-          ))}
-        </div>
-      </section>
+    <>
+    <Hero />
+    <div className="container mx-auto px-4 space-y-32 py-32">
 
       {/* ── PROCESS ── */}
       <section>
@@ -149,7 +71,7 @@ export default async function HomePage() {
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   style={{ background: "linear-gradient(to top, rgba(6,6,10,0.75) 0%, transparent 60%)" }} />
                 {project.featured && (
-                  <span className="absolute top-3 left-3 rounded-full px-2.5 py-1 text-xs font-bold text-white btn-grad">
+                  <span className="absolute top-3 left-3 rounded-full px-2.5 py-1 text-xs font-bold text-[#0c0c0d] btn-grad">
                     Featured
                   </span>
                 )}
@@ -191,12 +113,12 @@ export default async function HomePage() {
         <div className="card overflow-hidden flex flex-col sm:flex-row">
           <div className="sm:w-2/5 aspect-video sm:aspect-auto relative overflow-hidden" style={{ background: "var(--bg-card-hover)" }}>
             <img src={currentlyBuilding.image} alt={currentlyBuilding.name} className="object-cover w-full h-full" />
-            <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(139,92,246,0.3), rgba(59,130,246,0.3))" }} />
+            <div className="absolute inset-0" style={{ background: "rgba(12,12,13,0.4)" }} />
           </div>
           <div className="p-8 flex flex-col justify-center gap-4 flex-1">
             <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest w-fit rounded-full px-3 py-1"
-              style={{ background: "rgba(139,92,246,0.15)", color: "var(--accent)", border: "1px solid rgba(139,92,246,0.3)" }}>
-              <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" /> Live Build
+              style={{ background: "rgba(198,255,61,0.15)", color: "var(--accent)", border: "1px solid rgba(198,255,61,0.3)" }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" /> Live Build
             </span>
             <h3 className="text-2xl font-black" style={{ color: "var(--fg)" }}>{currentlyBuilding.name}</h3>
             <p className="text-sm leading-relaxed" style={{ color: "var(--fg-muted)" }}>{currentlyBuilding.desc}</p>
@@ -296,9 +218,9 @@ export default async function HomePage() {
           style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")" }} />
         <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full blur-3xl opacity-30 bg-white" />
         <div className="relative z-10">
-          <p className="text-white/70 text-sm font-semibold uppercase tracking-widest mb-4">Let&apos;s collaborate</p>
-          <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tight mb-4">Got a project in mind?</h2>
-          <p className="text-white/70 text-base mb-10 max-w-md mx-auto">
+          <p className="text-[#0c0c0d]/70 text-sm font-semibold uppercase tracking-widest mb-4">Let&apos;s collaborate</p>
+          <h2 className="text-4xl sm:text-5xl font-black text-[#0c0c0d] tracking-tight mb-4">Got a project in mind?</h2>
+          <p className="text-[#0c0c0d]/70 text-base mb-10 max-w-md mx-auto">
             I&apos;m always open to new opportunities, creative ideas, or just a good chat.
           </p>
           <a href={`mailto:${siteConfig.email}`}
@@ -310,5 +232,6 @@ export default async function HomePage() {
       </section>
 
     </div>
+    </>
   );
 }
