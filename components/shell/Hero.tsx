@@ -3,13 +3,14 @@ import SplitReveal from "../motion/SplitReveal";
 import Reveal from "../motion/Reveal";
 import Magnetic from "../motion/Magnetic";
 import RoleSwitcher from "./RoleSwitcher";
+import BlockScene from "../hero/BlockScene";
 import { siteConfig, roles } from "../../lib/data";
 
 export default function Hero() {
   return (
     <section className="hero" aria-label="Introduction">
-      {/* Stage 2: the three.js / cannon-es block scene mounts here, behind the type. */}
-      <div id="hero-stage" className="hero-stage" aria-hidden />
+      {/* Stage 2: Interactive three.js / cannon-es block scene */}
+      <BlockScene />
 
       <div className="hero-inner">
         <Reveal immediate delay={150} className="hero-top label">

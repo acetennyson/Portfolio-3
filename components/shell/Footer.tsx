@@ -34,6 +34,14 @@ export default function Footer() {
       <p className="footer-fine label">
         &copy; {new Date().getFullYear()} {siteConfig.name} &mdash; Built with Next.js &amp; Firebase
       </p>
+      <p className="footer-fine label footer-credit">
+        Astronaut 3D model &copy; Google, licensed Apache-2.0 (model-viewer shared-assets). Greeting
+        interaction concept inspired by{" "}
+        <a href="https://lusion.co" target="_blank" rel="noopener noreferrer">
+          Lusion
+        </a>
+        .
+      </p>
     </footer>
   );
 }

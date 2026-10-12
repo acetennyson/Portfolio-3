@@ -33,7 +33,10 @@ export default function Reveal({
 
     whenReady().then(() => {
       if (cancelled) return;
-      if (immediate) return play();
+      if (immediate) {
+        play();
+        return;
+      }
       io = new IntersectionObserver(
         (entries) => {
           if (entries.some((e) => e.isIntersecting)) {
