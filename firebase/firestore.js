@@ -61,6 +61,17 @@ export async function getProjects(status = null) {
   }
 }
 
+/** @param {string} id */
+export async function getProjectById(id) {
+  try {
+    const snap = await getDoc(doc(db, "projects", id));
+    return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+  } catch (error) {
+    console.error("Error fetching project:", error);
+    return null;
+  }
+}
+
 export async function addProject(data) {
   const projectsCol = collection(db, "projects");
   return addDoc(projectsCol, data);

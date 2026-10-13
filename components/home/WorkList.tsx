@@ -4,12 +4,16 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import Reveal from "../motion/Reveal";
 import { subscribe } from "../../lib/ticker";
+import { PreviewImage } from "../work/PreviewMedia";
 
-export type WorkItem = { id: string; title: string; blurb?: string; tags: string[]; year?: string; cover?: string; href: string; external: boolean };
+export type WorkItem = { id: string; title: string; blurb?: string; tags: string[]; year?: string; cover?: string; live?: string; href: string; external: boolean };
 
 /** Full-width case-study rows. On hover-capable devices a cover preview follows the cursor. */
-export default function WorkList({ items }: { items: WorkItem[] }) {
+export default function WorkList({ items, startIndex = 0 }: { items: WorkItem[]; startIndex?: number }) {
   const [active, setActive] = useState<number | null>(null);
+  const [seen, setSeen] = useState<Set<number>>(new Set());
+  const [touch, setTouch] = useState(false);
+  const hover = (i: number) => { setActive(i); setSeen((p) => (p.has(i) ? p : new Set(p).add(i))); };
   const prev = useRef<HTMLDivElement>(null);
   const target = useRef({ x: 0, y: 0 });
   const pos = useRef({ x: 0, y: 0 });
@@ -18,6 +22,7 @@ export default function WorkList({ items }: { items: WorkItem[] }) {
 
   useEffect(() => {
     canHover.current = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    setTouch(window.matchMedia("(hover: none)").matches);
     if (!canHover.current) return;
     const move = (e: PointerEvent) => { target.current.x = e.clientX; target.current.y = e.clientY; };
     window.addEventListener("pointermove", move, { passive: true });
@@ -38,13 +43,13 @@ export default function WorkList({ items }: { items: WorkItem[] }) {
         {items.map((it, i) => {
           const inner = (
             <>
-              <span className="n-work-idx label">{String(i + 1).padStart(2, "0")}</span>
+              <span className="n-work-idx label">{String(startIndex + i + 1).padStart(2, "0")}</span>
               <span className="n-work-main">
                 <span className="n-work-title">{it.title}</span>
                 {it.blurb && <span className="n-work-blurb">{it.blurb}</span>}
-                {it.cover && <img className="n-work-thumb" src={it.cover} alt="" loading="lazy" />}
+                {touch && (it.live || it.cover) && <PreviewImage className="n-work-thumb is-loaded" liveUrl={it.live} cover={it.cover} />}
               </span>
-              <span className="n-work-tags label">{it.tags.map((t) => <span key={t}>{t}</span>)}</span>
+              <span className="n-work-tags label">{it.tags.slice(0, 3).map((t) => <span key={t}>{t}</span>)}</span>
               <span className="n-work-year label">{it.year}</span>
               <ArrowUpRight className="n-work-arrow" size={34} strokeWidth={1.4} aria-hidden />
             </>
@@ -52,9 +57,9 @@ export default function WorkList({ items }: { items: WorkItem[] }) {
           return (
             <Reveal key={it.id} y={50} delay={i * 60}>
               {it.external ? (
-                <a className="n-work-row" href={it.href} target="_blank" rel="noopener noreferrer" onMouseEnter={() => setActive(i)} onFocus={() => setActive(i)}>{inner}</a>
+                <a className="n-work-row" data-transition-title={it.title} href={it.href} target="_blank" rel="noopener noreferrer" onMouseEnter={() => hover(i)} onFocus={() => hover(i)}>{inner}</a>
               ) : (
-                <Link className="n-work-row" href={it.href} onMouseEnter={() => setActive(i)} onFocus={() => setActive(i)}>{inner}</Link>
+                <Link className="n-work-row" data-transition-title={it.title} href={it.href} onMouseEnter={() => hover(i)} onFocus={() => hover(i)}>{inner}</Link>
               )}
             </Reveal>
           );
@@ -64,7 +69,7 @@ export default function WorkList({ items }: { items: WorkItem[] }) {
       <div ref={prev} className={`n-preview ${active !== null ? "is-on" : ""}`} aria-hidden>
         <div className="n-preview-inner">
           {items.map((it, i) => (
-            it.cover ? <img key={it.id} src={it.cover} alt="" className={i === active ? "on" : ""} /> : <span key={it.id} className={`n-preview-ph ${i === active ? "on" : ""}`}>{String(i + 1).padStart(2, "0")}</span>
+            seen.has(i) ? <PreviewImage key={it.id} className={i === active ? "on" : ""} liveUrl={it.live} cover={it.cover} label={String(startIndex + i + 1).padStart(2, "0")} /> : null
           ))}
         </div>
       </div>

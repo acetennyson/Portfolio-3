@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getBlogs, getProjects } from "../../firebase/firestore";
-import { siteConfig, staticProjects, staticBlogs, process, services, labTools, skills } from "../../lib/data";
+import { siteConfig, staticBlogs, process, services, labTools, skills } from "../../lib/data";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import Hero from "../../components/shell/Hero";
 import Reveal from "../../components/motion/Reveal";
@@ -11,6 +11,7 @@ import WorkList, { type WorkItem } from "../../components/home/WorkList";
 import Marquee from "../../components/home/Marquee";
 import Stats from "../../components/home/Stats";
 import Process from "../../components/home/Process";
+import { resolveProjects, workItem } from "../../lib/projects";
 
 export const revalidate = 60;
 
@@ -21,29 +22,14 @@ function formatDate(date: any): string {
   return String(date);
 }
 
-const yearOf = (d: any): string => {
-  const m = formatDate(d).match(/\d{4}$/);
-  return m ? m[0] : "";
-};
-
 export default async function HomePage() {
   const [liveBlogs, liveProjects] = await Promise.all([
     getBlogs().catch(() => []),
     getProjects().catch(() => []),
   ]);
 
-  // Firebase first, static fallback. Mapped to plain serialisable fields for the client list.
-  const source: any[] = liveProjects.length ? liveProjects.slice(0, 5) : staticProjects;
-  const work: WorkItem[] = source.map((p) => ({
-    id: String(p.id),
-    title: p.title,
-    blurb: p.description,
-    tags: (p.technologies || []).slice(0, 3),
-    year: yearOf(p.createdAt),
-    cover: p.coverImage || undefined,
-    href: p.liveUrl && p.liveUrl !== "#" ? p.liveUrl : "/projects",
-    external: !!(p.liveUrl && p.liveUrl !== "#"),
-  }));
+  // Firebase first, static fallback; each row opens its case study.
+  const work: WorkItem[] = resolveProjects(liveProjects).slice(0, 5).map(workItem);
   const blogs = liveBlogs.length ? liveBlogs.slice(0, 3) : staticBlogs;
 
   return (
@@ -147,7 +133,7 @@ export default async function HomePage() {
           <div className="blog-grid">
             {blogs.map((blog: any, i: number) => (
               <Reveal key={blog.id} y={60} delay={i * 80}>
-                <Link href={`/blog/${blog.slug}`} className="blog-card">
+                <Link href={`/blog/${blog.slug}`} className="blog-card" data-transition-title={blog.title}>
                   <time className="blog-card-date label">{blog.createdAt ? formatDate(blog.createdAt) : "Just now"}</time>
                   <h3 className="blog-card-title">{blog.title}</h3>
                   {blog.excerpt && <p className="blog-card-excerpt">{blog.excerpt}</p>}

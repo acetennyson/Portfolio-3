@@ -5,6 +5,7 @@ import PageFrame from "../../components/shell/PageFrame";
 import Loader from "../../components/shell/Loader";
 import Cursor from "../../components/shell/Cursor";
 import MotionProvider from "../../components/motion/MotionProvider";
+import PageTransition from "../../components/shell/PageTransition";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -13,6 +14,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <Loader />
       <MotionProvider />
       <Cursor />
+      <PageTransition />
       <Header />
       <PageFrame>{children}</PageFrame>
       <Footer />

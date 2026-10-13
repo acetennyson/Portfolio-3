@@ -22,11 +22,15 @@ export function lockScroll(lock: boolean) {
   document.documentElement.style.overflow = on ? "hidden" : "";
 }
 
-/** Resolves once the loader has finished (or immediately if it was already seen). */
-export function whenReady(): Promise<void> {
-  if (typeof document === "undefined") return Promise.resolve();
-  if (document.documentElement.dataset.loader === "done") return Promise.resolve();
-  return new Promise((resolve) => {
-    window.addEventListener("app:ready", () => resolve(), { once: true });
-  });
+const waitFor = (ev: string) => new Promise<void>((resolve) => window.addEventListener(ev, () => resolve(), { once: true }));
+
+/**
+ * Resolves once the loader has finished AND no route transition is covering the screen,
+ * so entrance animations play when the user can actually see them.
+ */
+export async function whenReady(): Promise<void> {
+  if (typeof document === "undefined") return;
+  const d = document.documentElement;
+  if (d.dataset.loader !== "done") await waitFor("app:ready");
+  if (d.dataset.transition === "covering") await waitFor("page:reveal");
 }
