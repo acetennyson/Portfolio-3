@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: "Ado Daniel NJ",
   title: "Full-Stack Developer & Designer",
-  tagline: "I Build Things\nPeople Love",
+  tagline: "Building Software\nThat Works",
   bio: "Interested in what makes software actually work — how its parts communicate, how its logic holds up, and how an idea becomes something people can use.",
   email: "danybeloved@gmail.com",
   avatar: "https://scontent-los4-1.xx.fbcdn.net/v/t39.30808-1/671876161_1511922483856485_4280946337718525779_n.jpg?stp=dst-jpg_tt6&cstp=mx720x720&ctp=s480x480&_nc_cat=108&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeGun_HMyrDSSWFxj1zuZ-73LY4_C-IRhdgtjj8L4hGF2Pd9K9uuai_jsH2kShAm3t7Jr0ac60fwPNFjRDidpzfX&_nc_ohc=co0o_KpR0sYQ7kNvwG0ZaFo&_nc_oc=AdpxrgkB9qA-6MiylNG3zFy1gHX888rseY2ufJQTidfmrcdgccOfVYuh7yni-7ON184&_nc_zt=24&_nc_ht=scontent-los4-1.xx&_nc_gid=WPFsVgf0EAMJJOUIx-rYEQ&_nc_ss=7b2a8&oh=00_Af-ErsjXzyJkD3bJi2MhFBGqvFvuCY2xuKvcTSvJuJZiqw&oe=6A3EF874",
@@ -88,10 +88,10 @@ export const skills = [
 ];
 
 export const process = [
-  { step: "01", title: "Discover", desc: "Understand the problem, constraints, and expected outcome before deciding what to build." },
-  { step: "02", title: "Design", desc: "Define the user experience, system boundaries, and implementation approach before complexity starts spreading." },
-  { step: "03", title: "Build", desc: "Implement the system, connect its moving parts, and test the behavior that matters." },
-  { step: "04", title: "Ship", desc: "Deploy, observe how it behaves, fix what breaks, and improve it based on what the product needs next." },
+  { step: "01", title: "Discover", desc: "Understand the problem, what constraints exist, and what outcome matters before deciding what to build." },
+  { step: "02", title: "Design", desc: "Define how the system should behave, where responsibilities sit, and how components will communicate before implementation spreads complexity everywhere." },
+  { step: "03", title: "Build", desc: "Implement the logic, connect the layers, and verify that the system behaves correctly under the conditions that matter." },
+  { step: "04", title: "Ship", desc: "Deploy it, watch how it performs, fix what breaks, and improve based on how the product actually gets used." },
 ];
 
 export const testimonials = [
@@ -124,9 +124,9 @@ export const currentlyBuilding = {
 };
 
 export const services = [
-  { n: "01", title: "Design", blurb: "Interfaces shaped around the problem, the people using them, and the system behind them.", items: ["UI / UX design", "Design systems", "Prototyping", "Motion direction"] },
-  { n: "02", title: "Development", blurb: "Building web applications, APIs, integrations, and backend systems with attention to performance, maintainability, and real-world constraints.", items: ["Next.js & React", "Node & Firebase", "WebGL / three.js", "Performance & SEO"] },
-  { n: "03", title: "Product", blurb: "Turning requirements into working software, making practical trade-offs, and improving the product as its needs evolve.", items: ["Scoping & roadmaps", "MVPs", "Launch & monitoring", "Iteration"] },
+  { n: "01", title: "Design", blurb: "Interfaces built around how people think, what the system can do, and how those two need to connect.", items: ["UI / UX design", "Design systems", "Prototyping", "Motion direction"] },
+  { n: "02", title: "Development", blurb: "Web applications, APIs, backend logic, and integrations — built to work together, hold up under use, and adapt when requirements change.", items: ["Next.js & React", "Node & Firebase", "WebGL / three.js", "Performance & SEO"] },
+  { n: "03", title: "Product", blurb: "Turning requirements into working software means understanding the problem, making trade-offs that hold up, and improving what's built as its needs become clearer.", items: ["Scoping & roadmaps", "MVPs", "Launch & monitoring", "Iteration"] },
 ];
 
 export const labTools = [
