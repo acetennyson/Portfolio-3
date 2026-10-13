@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { prefersReducedMotion } from "../../lib/motion";
 
@@ -46,13 +46,26 @@ function Fallback() {
 
 export default function BlockScene() {
   const [mode, setMode] = useState<Mode>("pending");
+  // A lost GPU context is usually transient (tab switch, GPU reset, too many contexts), so rebuild the
+  // scene a few times before giving up. Unsupported hardware goes straight to the static fallback.
+  const [attempt, setAttempt] = useState(0);
+  const retries = useRef(0);
+  const retryTimer = useRef<number | undefined>(undefined);
   // Stable identity: the scene effect depends on onFail, so an inline arrow would rebuild the whole WebGL scene on re-render.
-  const onFail = useCallback(() => { console.warn("[hero] onFail from BlockSceneInner"); setMode("fallback"); }, []);
+  const onFail = useCallback((reason: "lost" | "unsupported") => {
+    if (reason === "lost" && retries.current < 3) {
+      retries.current += 1;
+      window.clearTimeout(retryTimer.current);
+      retryTimer.current = window.setTimeout(() => setAttempt((a) => a + 1), 400);
+      return;
+    }
+    setMode("fallback");
+  }, []);
+  useEffect(() => () => window.clearTimeout(retryTimer.current), []);
 
   useEffect(() => {
     const conn = (navigator as any).connection;
     const slow = !!conn?.saveData || ["slow-2g", "2g"].includes(conn?.effectiveType);
-    console.warn("[hero] gate", { reduced: prefersReducedMotion(), slow, webgl: canUseWebGL(), type: conn?.effectiveType, saveData: conn?.saveData });
     if (prefersReducedMotion() || slow || !canUseWebGL()) {
       setMode("fallback");
       return;
@@ -69,5 +82,5 @@ export default function BlockScene() {
 
   if (mode === "fallback") return <Fallback />;
   if (mode === "pending") return <div className="hero-stage" aria-hidden />;
-  return <BlockSceneInner onFail={onFail} />;
+  return <BlockSceneInner key={attempt} onFail={onFail} />;
 }

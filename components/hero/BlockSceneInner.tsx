@@ -45,7 +45,9 @@ const BLOCK_COLORS = [0x2b2b30, 0x232327, 0x303036, 0x26262a, 0xe9e5dc];
 const ACCENT = 0xc6ff3d;
 const clamp = (x: number, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 
-export default function BlockSceneInner({ onFail }: { onFail?: () => void }) {
+export type FailReason = "lost" | "unsupported";
+
+export default function BlockSceneInner({ onFail }: { onFail?: (reason: FailReason) => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -63,14 +65,14 @@ export default function BlockSceneInner({ onFail }: { onFail?: () => void }) {
     try {
       renderer = new THREE.WebGLRenderer({ antialias: !light, alpha: false, powerPreference: "high-performance" });
     } catch {
-      onFail?.();
+      onFail?.("unsupported");
       return;
     }
     try {
       const gl = renderer.getContext();
       const ext = gl.getExtension("WEBGL_debug_renderer_info");
       const name = ext ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : "";
-      if (/swiftshader|llvmpipe|software/i.test(name)) { renderer.dispose(); renderer.forceContextLoss(); onFail?.(); return; }
+      if (/swiftshader|llvmpipe|software/i.test(name)) { renderer.dispose(); renderer.forceContextLoss(); onFail?.("unsupported"); return; }
     } catch { /* ignore */ }
 
     const maxPR = isMobile ? 1.5 : 2;
@@ -83,7 +85,7 @@ export default function BlockSceneInner({ onFail }: { onFail?: () => void }) {
     renderer.toneMappingExposure = 1.05;
     const canvas = renderer.domElement;
     // GPU reset / too many contexts: drop to the static composition instead of leaving a frozen black canvas.
-    const onLost = (e: Event) => { e.preventDefault(); onFail?.(); };
+    const onLost = (e: Event) => { e.preventDefault(); console.warn("[hero] WebGL context lost"); onFail?.("lost"); };
     canvas.addEventListener("webglcontextlost", onLost);
     canvas.style.opacity = "0";
     canvas.style.transition = "opacity 1.2s cubic-bezier(.22,1,.36,1)";
