@@ -21,7 +21,7 @@ export default function Footer() {
           {NAV.map((n) => (
             <li key={n.href}><Link href={n.href}>{n.label}</Link></li>
           ))}
-          <li><a href={`mailto:${siteConfig.email}`}>Contact</a></li>
+          <li><Link href="/contact">Contact</Link></li>
         </ul>
         <ul className="footer-social">
           {socials.map((s) => (

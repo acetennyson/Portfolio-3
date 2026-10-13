@@ -47,11 +47,12 @@ function Fallback() {
 export default function BlockScene() {
   const [mode, setMode] = useState<Mode>("pending");
   // Stable identity: the scene effect depends on onFail, so an inline arrow would rebuild the whole WebGL scene on re-render.
-  const onFail = useCallback(() => setMode("fallback"), []);
+  const onFail = useCallback(() => { console.warn("[hero] onFail from BlockSceneInner"); setMode("fallback"); }, []);
 
   useEffect(() => {
     const conn = (navigator as any).connection;
     const slow = !!conn?.saveData || ["slow-2g", "2g"].includes(conn?.effectiveType);
+    console.warn("[hero] gate", { reduced: prefersReducedMotion(), slow, webgl: canUseWebGL() });
     if (prefersReducedMotion() || slow || !canUseWebGL()) {
       setMode("fallback");
       return;

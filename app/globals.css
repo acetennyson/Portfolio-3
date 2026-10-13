@@ -1187,3 +1187,23 @@ html.has-cursor, html.has-cursor a, html.has-cursor button, html.has-cursor [rol
 .blog-content [class*="bg-white"], .blog-content [class*="bg-gray"] { background: transparent !important; }
 .blog-content [class*="shadow"] { box-shadow: none !important; }
 .blog-content [class*="border-gray"] { border-color: var(--border) !important; }
+
+/* ── Contact form ── */
+.c-form { display: grid; gap: 1.4rem; max-width: 42rem; }
+.c-row { display: grid; gap: 1.4rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+.c-field { display: grid; gap: .5rem; }
+.c-field input, .c-field textarea {
+  width: 100%; padding: .9rem 1rem; font: inherit; color: var(--fg);
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: .5rem;
+  transition: border-color .3s var(--ease-out);
+}
+.c-field textarea { resize: vertical; min-height: 9rem; }
+.c-field input:focus, .c-field textarea:focus { outline: none; border-color: var(--fg); }
+.c-field input:disabled, .c-field textarea:disabled { opacity: .6; }
+.c-field-error, .c-error { color: #ff6b5e; font-size: .85rem; margin: 0; }
+.c-submit { justify-self: start; cursor: pointer; }
+.c-submit:disabled { opacity: .5; cursor: default; }
+.c-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.c-done { max-width: 42rem; display: grid; gap: 1rem; justify-items: start; }
+.c-done-title { margin: 0; font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700; letter-spacing: -0.03em; }
+.c-done-text { margin: 0; color: var(--fg-muted); }

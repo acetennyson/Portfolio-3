@@ -11,7 +11,8 @@ export default function PageFrame({ children }: { children: React.ReactNode }) {
     pathname === "/tools" ||
     pathname.startsWith("/tools/") ||
     pathname === "/blog" ||
-    pathname.startsWith("/blog/");
+    pathname.startsWith("/blog/") ||
+    pathname === "/contact";
   return (
     <main id="main" className={fullBleed ? "flex-1" : "flex-1 container mx-auto px-4 pt-32 pb-16"}>
       {children}
