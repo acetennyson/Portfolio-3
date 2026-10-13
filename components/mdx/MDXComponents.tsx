@@ -1,54 +1,23 @@
-"use client";
-
 import React from "react";
+import { EmailForm } from "./EmailForm";
 
-// Custom MDX components that can be used in blog posts
+// Custom MDX components that can be used in blog posts.
+//
+// IMPORTANT: this file must NOT have a "use client" directive at the top.
+// next-mdx-remote/rsc's <MDXRemote> compiles and renders MDX on the server,
+// and resolves these components by destructuring them straight off this
+// object at render time. If this module is marked "use client", Next
+// treats every export from it (including this plain object) as a client
+// reference, and the individual component properties no longer resolve on
+// the server — which surfaces as "Expected component `X` to be defined"
+// errors for whichever custom tag is used first in a post.
+//
+// Only EmailForm needs client-side state (useState), so it lives in its
+// own "use client" file (./EmailForm.tsx) and is imported here as a plain
+// value.
 export const MDXComponents = {
   // Custom email collection form
-  EmailForm: ({ campaign, placeholder = "Enter your email" }: { campaign: string; placeholder?: string }) => {
-    const [email, setEmail] = React.useState("");
-    const [status, setStatus] = React.useState<"idle" | "loading" | "success" | "error">("idle");
-
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      setStatus("loading");
-      
-      // TODO: Implement your email collection logic
-      // Could integrate with Firebase, Mailchimp, ConvertKit, etc.
-      console.log("Email submitted:", { email, campaign });
-      
-      setTimeout(() => {
-        setStatus("success");
-        setEmail("");
-      }, 1000);
-    };
-
-    return (
-      <form onSubmit={handleSubmit} className="my-8 p-6 rounded-lg bg-[var(--surface)] border border-[var(--border)]">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder={placeholder}
-            required
-            disabled={status === "loading" || status === "success"}
-            className="flex-1 px-4 py-2 rounded bg-[var(--bg)] border border-[var(--border)] text-[var(--fg)] placeholder:text-[var(--fg-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
-          />
-          <button
-            type="submit"
-            disabled={status === "loading" || status === "success"}
-            className="px-6 py-2 rounded bg-[var(--accent)] text-[var(--accent-fg)] font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
-          >
-            {status === "loading" ? "Sending..." : status === "success" ? "Subscribed!" : "Subscribe"}
-          </button>
-        </div>
-        {status === "error" && (
-          <p className="mt-2 text-sm text-red-500">Something went wrong. Please try again.</p>
-        )}
-      </form>
-    );
-  },
+  EmailForm,
 
   // Custom callout/alert boxes
   Callout: ({ type = "info", children }: { type?: "info" | "warning" | "error" | "success"; children: React.ReactNode }) => {
