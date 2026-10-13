@@ -52,7 +52,7 @@ export default function BlockScene() {
   useEffect(() => {
     const conn = (navigator as any).connection;
     const slow = !!conn?.saveData || ["slow-2g", "2g"].includes(conn?.effectiveType);
-    console.warn("[hero] gate", { reduced: prefersReducedMotion(), slow, webgl: canUseWebGL() });
+    console.warn("[hero] gate", { reduced: prefersReducedMotion(), slow, webgl: canUseWebGL(), type: conn?.effectiveType, saveData: conn?.saveData });
     if (prefersReducedMotion() || slow || !canUseWebGL()) {
       setMode("fallback");
       return;
