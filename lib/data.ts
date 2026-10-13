@@ -122,3 +122,19 @@ export const currentlyBuilding = {
   progress: 65,
   image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=800&q=80",
 };
+
+export const services = [
+  { n: "01", title: "Design", blurb: "Interfaces with a point of view, shaped around how people actually use them.", items: ["UI / UX design", "Design systems", "Prototyping", "Motion direction"] },
+  { n: "02", title: "Development", blurb: "Fast, accessible, production-grade builds from the database to the pixel.", items: ["Next.js & React", "Node & Firebase", "WebGL / three.js", "Performance & SEO"] },
+  { n: "03", title: "Product", blurb: "From first sketch to shipped, then keep improving what is live.", items: ["Scoping & roadmaps", "MVPs", "Launch & monitoring", "Iteration"] },
+];
+
+export const labTools = [
+  { name: "Calculator", desc: "A sleek calculator for quick maths.", href: "/tools/calculator" },
+  { name: "Dice Roller", desc: "3D physics-based dice roller.", href: "/tools/dice" },
+  { name: "Weather", desc: "City, ZIP, IP or coordinates. 7-day forecast.", href: "/tools/weather" },
+  { name: "Compass", desc: "Real-time compass from device orientation.", href: "/tools/compass" },
+  { name: "Converter", desc: "Currency, length, weight, temperature, time.", href: "/tools/converter" },
+  { name: "World Clock", desc: "Multiple timezones in four clock styles.", href: "/tools/world-clock" },
+  { name: "BMI Tracker", desc: "BMI gauge, healthy range and tips.", href: "/tools/bmi" },
+];

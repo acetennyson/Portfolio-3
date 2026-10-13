@@ -11,6 +11,7 @@ import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { subscribe } from "../../lib/ticker";
 import { prefersReducedMotion } from "../../lib/motion";
 import { siteConfig } from "../../lib/data";
+import Magnetic from "../motion/Magnetic";
 
 /**
  * Full-bleed, scroll-pinned cinematic astronaut sequence.
@@ -775,8 +776,10 @@ export default function CinematicAstronaut() {
         </div>
 
         <div ref={ctaRef} className="cine-cta" style={{ opacity: 0 }}>
-          <p>Let&apos;s build something unreal.</p>
-          <a href={`mailto:${siteConfig.email}`} className="cine-cta-btn">{siteConfig.email}</a>
+          <h2 className="cine-cta-title">Let&apos;s build<br /><em className="font-serif italic font-normal">something unreal.</em></h2>
+          <Magnetic strength={0.4}>
+            <a href={`mailto:${siteConfig.email}`} className="cine-cta-btn">{siteConfig.email}</a>
+          </Magnetic>
         </div>
       </div>
     </div>

@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { getBlogs, getProjects } from "../../firebase/firestore";
-import { siteConfig, staticProjects, staticBlogs, process, testimonials, timeline, currentlyBuilding } from "../../lib/data";
-import { ArrowRight, ExternalLink } from "lucide-react";
+import { siteConfig, staticProjects, staticBlogs, process, services, labTools, skills } from "../../lib/data";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import Hero from "../../components/shell/Hero";
 import Reveal from "../../components/motion/Reveal";
-import SplitReveal from "../../components/motion/SplitReveal";
 import Magnetic from "../../components/motion/Magnetic";
 import CinematicAstronaut from "../../components/shell/CinematicAstronaut";
+import ScrollWords from "../../components/home/ScrollWords";
+import WorkList, { type WorkItem } from "../../components/home/WorkList";
+import Marquee from "../../components/home/Marquee";
+import Stats from "../../components/home/Stats";
+import Process from "../../components/home/Process";
 
 export const revalidate = 60;
 
@@ -17,225 +21,149 @@ function formatDate(date: any): string {
   return String(date);
 }
 
+const yearOf = (d: any): string => {
+  const m = formatDate(d).match(/\d{4}$/);
+  return m ? m[0] : "";
+};
+
 export default async function HomePage() {
   const [liveBlogs, liveProjects] = await Promise.all([
     getBlogs().catch(() => []),
     getProjects().catch(() => []),
   ]);
 
-  const projects = liveProjects.length ? liveProjects.slice(0, 3) : staticProjects;
+  // Firebase first, static fallback. Mapped to plain serialisable fields for the client list.
+  const source: any[] = liveProjects.length ? liveProjects.slice(0, 5) : staticProjects;
+  const work: WorkItem[] = source.map((p) => ({
+    id: String(p.id),
+    title: p.title,
+    blurb: p.description,
+    tags: (p.technologies || []).slice(0, 3),
+    year: yearOf(p.createdAt),
+    cover: p.coverImage || undefined,
+    href: p.liveUrl && p.liveUrl !== "#" ? p.liveUrl : "/projects",
+    external: !!(p.liveUrl && p.liveUrl !== "#"),
+  }));
   const blogs = liveBlogs.length ? liveBlogs.slice(0, 3) : staticBlogs;
 
   return (
     <>
-    <Hero />
-    <div className="home-content">
-      
-      {/* ── STATEMENT ── */}
-      <section className="statement-section">
-        <Reveal y={60}>
-          <SplitReveal 
-            as="h2" 
-            className="statement-title" 
-            stagger={120} 
-            delay={0}
-            text="Building *digital experiences* that feel visually striking and *technically seamless.*"
+      <Hero />
+      <div className="home-content">
+        {/* ── STATEMENT (scroll-scrubbed, word by word) ── */}
+        <section className="n-statement">
+          <p className="label n-statement-label">( About )</p>
+          <ScrollWords
+            className="n-statement-text"
+            text="I design and build *digital experiences* that feel visually striking, run fast and are *technically seamless* from the first scroll to the last click."
           />
-        </Reveal>
-      </section>
+        </section>
 
-      {/* ── FEATURED WORK ── */}
-      <section className="featured-work-section">
-        <Reveal y={40}>
-          <div className="section-header">
-            <p className="label" style={{ color: "var(--accent-ink)" }}>Featured Work</p>
-            <h2 className="section-title">Selected Projects</h2>
+        {/* ── SELECTED WORK ── */}
+        <section className="n-sec" id="work">
+          <div className="n-head">
+            <h2>Selected <em className="font-serif italic font-normal">work</em></h2>
+            <p className="label">({String(work.length).padStart(2, "0")}) Projects</p>
           </div>
-        </Reveal>
-
-        <div className="work-list">
-          {projects.map((project: any, i: number) => (
-            <Reveal key={project.id} y={80} delay={i * 100}>
-              <article className="work-item">
-                <div className="work-item-visual">
-                  <div className="work-item-img-wrap">
-                    {project.coverImage ? (
-                      <img src={project.coverImage} alt={project.title} className="work-item-img" />
-                    ) : (
-                      <div className="work-item-placeholder">
-                        <span className="work-item-number">{String(i + 1).padStart(2, "0")}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="work-item-content">
-                  <div className="work-item-meta">
-                    <span className="label">0{i + 1}</span>
-                    {project.technologies && (
-                      <div className="work-item-tags">
-                        {project.technologies.slice(0, 3).map((t: string) => (
-                          <span key={t} className="label">{t}</span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <h3 className="work-item-title">{project.title}</h3>
-                  {project.description && (
-                    <p className="work-item-desc">{project.description}</p>
-                  )}
-                  {project.liveUrl && (
-                    <Magnetic>
-                      <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="work-item-link">
-                        View project <ArrowRight size={16} />
-                      </a>
-                    </Magnetic>
-                  )}
-                </div>
-              </article>
-            </Reveal>
-          ))}
-        </div>
-
-        <Reveal y={40} delay={200}>
-          <div className="section-footer">
-            <Magnetic>
-              <Link href="/projects" className="btn-line-lg">
-                See all projects <ArrowRight size={18} />
-              </Link>
-            </Magnetic>
+          <WorkList items={work} />
+          <div className="n-foot">
+            <Magnetic><Link href="/projects" className="btn-line">See all projects <ArrowRight size={16} /></Link></Magnetic>
           </div>
-        </Reveal>
-      </section>
+        </section>
 
-      {/* ── APPROACH ── */}
-      <section className="approach-section">
-        <Reveal y={40}>
-          <div className="section-header">
-            <p className="label" style={{ color: "var(--accent-ink)" }}>Approach</p>
-            <h2 className="section-title">How I Work</h2>
+        {/* ── STATS + MARQUEE ── */}
+        <section className="n-sec n-tight">
+          <Stats stats={siteConfig.stats} />
+        </section>
+        <section className="n-marq-wrap" aria-label="Skills">
+          <Marquee items={skills} />
+          <Marquee items={[...skills].reverse()} reverse outline />
+        </section>
+
+        {/* ── SERVICES ── */}
+        <section className="n-sec">
+          <div className="n-head">
+            <h2>What I <em className="font-serif italic font-normal">do</em></h2>
+            <p className="label">( Services )</p>
           </div>
-        </Reveal>
-
-        <div className="approach-grid">
-          {process.map(({ step, title, desc }, i) => (
-            <Reveal key={step} y={60} delay={i * 80}>
-              <div className="approach-card">
-                <span className="approach-number">{step}</span>
-                <h3 className="approach-title">{title}</h3>
-                <p className="approach-desc">{desc}</p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      {/* ── MARQUEE (Skills) ── */}
-      <section className="marquee-section">
-        <div className="marquee">
-          <div className="marquee-inner">
-            <span>React</span>
-            <span>Next.js</span>
-            <span>TypeScript</span>
-            <span>Three.js</span>
-            <span>WebGL</span>
-            <span>Firebase</span>
-            <span>Node.js</span>
-            <span>Tailwind</span>
-            <span>React</span>
-            <span>Next.js</span>
-            <span>TypeScript</span>
-            <span>Three.js</span>
+          <div className="n-services">
+            {services.map((s, i) => (
+              <Reveal key={s.n} y={50} delay={i * 90}>
+                <article className="n-service">
+                  <span className="label">{s.n}</span>
+                  <h3>{s.title}</h3>
+                  <p>{s.blurb}</p>
+                  <ul>{s.items.map((it) => <li key={it}>{it}</li>)}</ul>
+                </article>
+              </Reveal>
+            ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── LAB TEASER ── */}
-      <section className="lab-section">
-        <Reveal y={40}>
-          <div className="section-header-center">
-            <p className="label" style={{ color: "var(--accent-ink)" }}>Lab</p>
-            <h2 className="section-title">Experiments & Tools</h2>
-            <p className="section-subtitle">Interactive tools and experiments I've built for fun and learning.</p>
+        {/* ── PROCESS ── */}
+        <section className="n-sec">
+          <div className="n-head">
+            <h2>How I <em className="font-serif italic font-normal">work</em></h2>
+            <p className="label">( Process )</p>
           </div>
-        </Reveal>
+          <Process steps={process} />
+        </section>
 
-        <div className="lab-grid">
-          {[
-            { name: "3D Dice", url: "/tools/dice", desc: "Physics-based dice roller" },
-            { name: "Weather", url: "/tools/weather", desc: "Real-time weather data" },
-            { name: "Calculator", url: "/tools/calculator", desc: "Modern calculator" },
-            { name: "World Clock", url: "/tools/world-clock", desc: "Global time zones" },
-          ].map((tool, i) => (
-            <Reveal key={tool.name} y={60} delay={i * 60}>
-              <Link href={tool.url} className="lab-card">
-                <div className="lab-card-content">
-                  <h3 className="lab-card-title">{tool.name}</h3>
-                  <p className="lab-card-desc">{tool.desc}</p>
-                </div>
-                <div className="lab-card-arrow">
-                  <ArrowRight size={20} />
-                </div>
-              </Link>
-            </Reveal>
-          ))}
-        </div>
-
-        <Reveal y={40} delay={200}>
-          <div className="section-footer">
-            <Magnetic>
-              <Link href="/tools" className="btn-line-lg">
-                Explore all tools <ArrowRight size={18} />
-              </Link>
-            </Magnetic>
+        {/* ── LAB ── */}
+        <section className="n-sec">
+          <div className="n-head">
+            <h2>The <em className="font-serif italic font-normal">lab</em></h2>
+            <p className="label">({String(labTools.length).padStart(2, "0")}) Tools & experiments</p>
           </div>
-        </Reveal>
-      </section>
-
-      {/* ── BLOG PREVIEW ── */}
-      <section className="blog-section">
-        <Reveal y={40}>
-          <div className="section-header">
-            <p className="label" style={{ color: "var(--accent-ink)" }}>Writing</p>
-            <h2 className="section-title">Latest Thoughts</h2>
-          </div>
-        </Reveal>
-
-        <div className="blog-grid">
-          {blogs.map((blog: any, i: number) => {
-            const href = `/blog/${blog.slug}`;
-            const date = blog.createdAt ? formatDate(blog.createdAt) : "Just now";
-            return (
-              <Reveal key={blog.id} y={60} delay={i * 80}>
-                <Link href={href} className="blog-card">
-                  <time className="blog-card-date label">{date}</time>
-                  <h3 className="blog-card-title">{blog.title}</h3>
-                  {blog.excerpt && (
-                    <p className="blog-card-excerpt">{blog.excerpt}</p>
-                  )}
-                  <span className="blog-card-link">
-                    Read more <ArrowRight size={14} />
+          <div className="n-lab-grid">
+            {labTools.map((t, i) => (
+              <Reveal key={t.href} y={40} delay={(i % 4) * 70}>
+                <Link href={t.href} className="n-lab-tile">
+                  <span className="label">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="n-lab-body">
+                    <strong>{t.name}</strong>
+                    <small>{t.desc}</small>
                   </span>
+                  <ArrowUpRight className="n-lab-arrow" size={22} aria-hidden />
                 </Link>
               </Reveal>
-            );
-          })}
-        </div>
-
-        <Reveal y={40} delay={200}>
-          <div className="section-footer">
-            <Magnetic>
-              <Link href="/blog" className="btn-line-lg">
-                All posts <ArrowRight size={18} />
+            ))}
+            <Reveal y={40} delay={210}>
+              <Link href="/tools" className="n-lab-tile n-lab-all">
+                <span className="label">All</span>
+                <span className="n-lab-body"><strong>Open the lab</strong><small>Every tool in one place.</small></span>
+                <ArrowRight className="n-lab-arrow" size={22} aria-hidden />
               </Link>
-            </Magnetic>
+            </Reveal>
           </div>
-        </Reveal>
-      </section>
+        </section>
 
-        </div>
+        {/* ── WRITING ── */}
+        <section className="n-sec">
+          <div className="n-head">
+            <h2>Latest <em className="font-serif italic font-normal">writing</em></h2>
+            <p className="label">( Blog )</p>
+          </div>
+          <div className="blog-grid">
+            {blogs.map((blog: any, i: number) => (
+              <Reveal key={blog.id} y={60} delay={i * 80}>
+                <Link href={`/blog/${blog.slug}`} className="blog-card">
+                  <time className="blog-card-date label">{blog.createdAt ? formatDate(blog.createdAt) : "Just now"}</time>
+                  <h3 className="blog-card-title">{blog.title}</h3>
+                  {blog.excerpt && <p className="blog-card-excerpt">{blog.excerpt}</p>}
+                  <span className="blog-card-link">Read more <ArrowRight size={14} /></span>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+          <div className="n-foot">
+            <Magnetic><Link href="/blog" className="btn-line">All posts <ArrowRight size={16} /></Link></Magnetic>
+          </div>
+        </section>
+      </div>
 
-    {/* ── CINEMATIC ASTRONAUT / CONTACT (replaces "Say Hello") ── */}
-    <CinematicAstronaut />
+      {/* Closing call to action = the astronaut finale */}
+      <CinematicAstronaut />
     </>
   );
 }
