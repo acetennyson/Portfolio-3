@@ -7,6 +7,13 @@ import "@fontsource/instrument-serif/400-italic.css";
 import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+// Search-engine ownership-verification codes. Drop the real values into your .env (see .env.example)
+// and each tag below appears automatically — nothing else to wire up. Any left unset are simply omitted.
+const GOOGLE_SITE_VERIFICATION = process.env.GOOGLE_SITE_VERIFICATION;
+const BING_SITE_VERIFICATION = process.env.BING_SITE_VERIFICATION;
+const YANDEX_SITE_VERIFICATION = process.env.YANDEX_SITE_VERIFICATION;
+const PINTEREST_SITE_VERIFICATION = process.env.PINTEREST_SITE_VERIFICATION;
 const NAME = "Ado Daniel Nji";
 const TITLE = "Ado Daniel Nji — Full-Stack Developer & Designer";
 const DESCRIPTION =
@@ -57,9 +64,12 @@ export const metadata: Metadata = {
     creator: "@AdoNj84371",
   },
   verification: {
-    // Paste the verification codes from Google Search Console / Bing Webmaster Tools here once you register the property.
-    // google: "your-google-site-verification-code",
-    // other: { "msvalidate.01": "your-bing-verification-code" },
+    google: GOOGLE_SITE_VERIFICATION,
+    yandex: YANDEX_SITE_VERIFICATION,
+    other: {
+      ...(BING_SITE_VERIFICATION ? { "msvalidate.01": BING_SITE_VERIFICATION } : {}),
+      ...(PINTEREST_SITE_VERIFICATION ? { "p:domain_verify": PINTEREST_SITE_VERIFICATION } : {}),
+    },
   },
 };
 
