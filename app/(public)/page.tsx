@@ -41,7 +41,7 @@ export default async function HomePage() {
           <p className="label n-statement-label">( About )</p>
           <ScrollWords
             className="n-statement-text"
-            text="I design and build *digital experiences* that feel visually striking, run fast and are *technically seamless* from the first scroll to the last click."
+            text="Good software doesn't just work — it moves through *users*, *technology*, *security*, and *interfaces* with intention. I engineer systems that hold together under scrutiny, respect the layers beneath them, and meet people where they are."
           />
         </section>
 

@@ -2,7 +2,7 @@ export const siteConfig = {
   name: "Ado Daniel NJ",
   title: "Full-Stack Developer & Designer",
   tagline: "I Build Things\nPeople Love",
-  bio: "Designer & developer crafting high-performance digital products. From concept to deployment — I make it real.",
+  bio: "Interested in what makes software actually work — how its parts communicate, how its logic holds up, and how an idea becomes something people can use.",
   email: "danybeloved@gmail.com",
   avatar: "https://scontent-los4-1.xx.fbcdn.net/v/t39.30808-1/671876161_1511922483856485_4280946337718525779_n.jpg?stp=dst-jpg_tt6&cstp=mx720x720&ctp=s480x480&_nc_cat=108&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeGun_HMyrDSSWFxj1zuZ-73LY4_C-IRhdgtjj8L4hGF2Pd9K9uuai_jsH2kShAm3t7Jr0ac60fwPNFjRDidpzfX&_nc_ohc=co0o_KpR0sYQ7kNvwG0ZaFo&_nc_oc=AdpxrgkB9qA-6MiylNG3zFy1gHX888rseY2ufJQTidfmrcdgccOfVYuh7yni-7ON184&_nc_zt=24&_nc_ht=scontent-los4-1.xx&_nc_gid=WPFsVgf0EAMJJOUIx-rYEQ&_nc_ss=7b2a8&oh=00_Af-ErsjXzyJkD3bJi2MhFBGqvFvuCY2xuKvcTSvJuJZiqw&oe=6A3EF874",
   social: {
@@ -88,10 +88,10 @@ export const skills = [
 ];
 
 export const process = [
-  { step: "01", title: "Discover", desc: "Deep dive into the problem space, user needs, and business goals." },
-  { step: "02", title: "Design", desc: "Wireframes, prototypes, and design systems that guide the build." },
-  { step: "03", title: "Build", desc: "Clean, performant code with a focus on accessibility and scale." },
-  { step: "04", title: "Ship", desc: "Deploy, monitor, iterate. Products that keep getting better." },
+  { step: "01", title: "Discover", desc: "Understand the problem, constraints, and expected outcome before deciding what to build." },
+  { step: "02", title: "Design", desc: "Define the user experience, system boundaries, and implementation approach before complexity starts spreading." },
+  { step: "03", title: "Build", desc: "Implement the system, connect its moving parts, and test the behavior that matters." },
+  { step: "04", title: "Ship", desc: "Deploy, observe how it behaves, fix what breaks, and improve it based on what the product needs next." },
 ];
 
 export const testimonials = [
@@ -124,9 +124,9 @@ export const currentlyBuilding = {
 };
 
 export const services = [
-  { n: "01", title: "Design", blurb: "Interfaces with a point of view, shaped around how people actually use them.", items: ["UI / UX design", "Design systems", "Prototyping", "Motion direction"] },
-  { n: "02", title: "Development", blurb: "Fast, accessible, production-grade builds from the database to the pixel.", items: ["Next.js & React", "Node & Firebase", "WebGL / three.js", "Performance & SEO"] },
-  { n: "03", title: "Product", blurb: "From first sketch to shipped, then keep improving what is live.", items: ["Scoping & roadmaps", "MVPs", "Launch & monitoring", "Iteration"] },
+  { n: "01", title: "Design", blurb: "Interfaces shaped around the problem, the people using them, and the system behind them.", items: ["UI / UX design", "Design systems", "Prototyping", "Motion direction"] },
+  { n: "02", title: "Development", blurb: "Building web applications, APIs, integrations, and backend systems with attention to performance, maintainability, and real-world constraints.", items: ["Next.js & React", "Node & Firebase", "WebGL / three.js", "Performance & SEO"] },
+  { n: "03", title: "Product", blurb: "Turning requirements into working software, making practical trade-offs, and improving the product as its needs evolve.", items: ["Scoping & roadmaps", "MVPs", "Launch & monitoring", "Iteration"] },
 ];
 
 export const labTools = [
