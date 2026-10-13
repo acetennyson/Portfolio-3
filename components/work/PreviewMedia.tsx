@@ -12,10 +12,11 @@ export function PreviewImage({ liveUrl, cover, alt = "", className = "", label =
   const [stage, setStage] = useState<"shot" | "cover" | "none">(liveUrl ? "shot" : cover ? "cover" : "none");
   const [loaded, setLoaded] = useState(false);
   const src = stage === "shot" ? shotSrc(liveUrl!) : stage === "cover" ? cover : undefined;
-
   if (!src) return <span className={`n-preview-ph ${className}`} aria-hidden>{label}</span>;
   return (
     <img
+      // A cached image can finish before React attaches onLoad; without this check it would stay at opacity 0 forever.
+      ref={(el) => { if (el && el.complete && el.naturalWidth > 0) setLoaded(true); }}
       className={`pm-img ${loaded ? "is-loaded" : ""} ${className}`}
       src={src}
       alt={alt}

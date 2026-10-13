@@ -215,6 +215,14 @@ function makeEnvTexture() {
   return t;
 }
 
+/** Dispose a material AND every texture it holds (Material.dispose() alone leaks the GPU textures). */
+function disposeMaterial(m: THREE.Material) {
+  for (const v of Object.values(m)) {
+    if (v && (v as THREE.Texture).isTexture) (v as THREE.Texture).dispose();
+  }
+  m.dispose();
+}
+
 export default function CinematicAstronaut() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -263,12 +271,14 @@ export default function CinematicAstronaut() {
       setFallback(true);
       return noop;
     }
+    const onLost = (e: Event) => { e.preventDefault(); setFallback(true); };
+    canvas.addEventListener("webglcontextlost", onLost);
     // Software GL (SwiftShader / llvmpipe) would crawl -> bail to the static fallback.
     try {
       const gl = renderer.getContext();
       const ext = gl.getExtension("WEBGL_debug_renderer_info");
       const name = ext ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : "";
-      if (/swiftshader|llvmpipe|software/i.test(name)) { renderer.dispose(); setFallback(true); return noop; }
+      if (/swiftshader|llvmpipe|software/i.test(name)) { canvas.removeEventListener("webglcontextlost", onLost); renderer.dispose(); renderer.forceContextLoss(); setFallback(true); return noop; }
     } catch { /* ignore */ }
     let pr = P.pr;
     renderer.setPixelRatio(pr);
@@ -722,6 +732,7 @@ export default function CinematicAstronaut() {
         const a = seg(p, 0.92, 0.98);
         ctaRef.current.style.opacity = String(a);
         ctaRef.current.style.pointerEvents = a > 0.5 ? "auto" : "none";
+        ctaRef.current.style.visibility = a > 0.05 ? "visible" : "hidden"; // keeps the link out of the tab order until it is shown
         ctaRef.current.style.transform = `translate3d(0,${(1 - a) * 24}px,0)`;
       }
 
@@ -741,10 +752,15 @@ export default function CinematicAstronaut() {
         const m = o as THREE.Mesh;
         m.geometry?.dispose?.();
         const mat = m.material as THREE.Material | THREE.Material[] | undefined;
-        if (Array.isArray(mat)) mat.forEach((x) => x.dispose());
-        else mat?.dispose?.();
+        if (Array.isArray(mat)) mat.forEach(disposeMaterial);
+        else if (mat) disposeMaterial(mat);
       });
+      // Sprites share their sticker textures and the env equirect lives outside the scene graph
+      texes.forEach((t) => t.dispose());
+      envTex.dispose();
+      canvas.removeEventListener("webglcontextlost", onLost);
       envRT.dispose(); pmrem.dispose(); composer?.dispose(); renderer.dispose();
+      renderer.forceContextLoss();
     };
   }
 
@@ -758,7 +774,7 @@ export default function CinematicAstronaut() {
   }
 
   return (
-    <div ref={wrapRef} className="cine-wrap" aria-label="Astronaut cinematic sequence">
+    <div ref={wrapRef} className="cine-wrap" role="region" aria-label="Closing sequence">
       <div ref={stageRef} className="cine-stage">
         <canvas ref={canvasRef} className="cine-canvas" aria-hidden />
         {!ready && <div className="cine-loading">Loading…</div>}
@@ -775,7 +791,7 @@ export default function CinematicAstronaut() {
           <div ref={t3}>BUILD SOMETHING</div>
         </div>
 
-        <div ref={ctaRef} className="cine-cta" style={{ opacity: 0 }}>
+        <div ref={ctaRef} className="cine-cta" style={{ opacity: 0, visibility: "hidden" }}>
           <h2 className="cine-cta-title">Let&apos;s build<br /><em className="font-serif italic font-normal">something unreal.</em></h2>
           <Magnetic strength={0.4}>
             <a href={`mailto:${siteConfig.email}`} className="cine-cta-btn">{siteConfig.email}</a>

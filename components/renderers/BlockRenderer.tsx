@@ -35,7 +35,7 @@ export default function BlockRenderer({ blocks }: { blocks: any[] }) {
           case "image":
             return (
               <figure key={index} className="my-8">
-                <img src={block.data.url} alt={block.data.caption || ""}
+                <img src={block.data.url} alt={block.data.caption || ""} loading="lazy" decoding="async"
                   className="rounded-xl w-full object-cover" style={{ border: "1px solid var(--border)" }} />
                 {block.data.caption && (
                   <figcaption className="text-sm text-center mt-2" style={{ color: "var(--fg-muted)" }}>{block.data.caption}</figcaption>

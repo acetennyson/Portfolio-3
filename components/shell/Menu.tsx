@@ -13,6 +13,7 @@ export default function Menu({ open, onClose }: { open: boolean; onClose: () => 
   const root = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   const wasOpen = useRef(false);
+  const opener = useRef<HTMLElement | null>(null);
 
   // close on route change
   useEffect(() => { if (open) onClose(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [pathname]);
@@ -24,6 +25,9 @@ export default function Menu({ open, onClose }: { open: boolean; onClose: () => 
 
     if (open) {
       wasOpen.current = true;
+      // Safari doesn't focus buttons on click, so fall back to the header button itself
+      const ae = document.activeElement as HTMLElement | null;
+      opener.current = ae && ae !== document.body ? ae : document.querySelector<HTMLElement>(".menu-btn");
       setVisible(true);
       lockScroll(true);
       const links = el.querySelectorAll<HTMLElement>(".menu-link-i");
@@ -42,6 +46,11 @@ export default function Menu({ open, onClose }: { open: boolean; onClose: () => 
     } else if (wasOpen.current) {
       wasOpen.current = false;
       lockScroll(false);
+      // hand focus back to whatever opened the menu (the header button)
+      // (once the panel goes inert, focus inside it has already dropped to <body>)
+      const back = opener.current;
+      const ae = document.activeElement;
+      if (back && (!ae || ae === document.body || el.contains(ae))) back.focus({ preventScroll: true });
       if (reduced) { setVisible(false); return; }
       animate(el, {
         clipPath: ["inset(0% 0% 0% 0%)", "inset(100% 0% 0% 0%)"],
@@ -57,7 +66,11 @@ export default function Menu({ open, onClose }: { open: boolean; onClose: () => 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
       if (e.key === "Tab" && root.current) {
-        const f = root.current.querySelectorAll<HTMLElement>("a[href], button");
+        // The header (menu button, theme toggle) sits above the panel, so it is part of the dialog's tab loop.
+        const f = [
+          ...document.querySelectorAll<HTMLElement>(".site-header button"),
+          ...root.current.querySelectorAll<HTMLElement>("a[href]"),
+        ];
         if (!f.length) return;
         const first = f[0], last = f[f.length - 1];
         if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
@@ -81,7 +94,7 @@ export default function Menu({ open, onClose }: { open: boolean; onClose: () => 
       id="site-menu"
       className="menu"
       data-open={visible ? "true" : "false"}
-      aria-hidden={!open}
+      inert={!open}
       role="dialog"
       aria-modal="true"
       aria-label="Site menu"

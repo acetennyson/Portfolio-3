@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { prefersReducedMotion } from "../../lib/motion";
 
@@ -46,6 +46,8 @@ function Fallback() {
 
 export default function BlockScene() {
   const [mode, setMode] = useState<Mode>("pending");
+  // Stable identity: the scene effect depends on onFail, so an inline arrow would rebuild the whole WebGL scene on re-render.
+  const onFail = useCallback(() => setMode("fallback"), []);
 
   useEffect(() => {
     const conn = (navigator as any).connection;
@@ -66,5 +68,5 @@ export default function BlockScene() {
 
   if (mode === "fallback") return <Fallback />;
   if (mode === "pending") return <div className="hero-stage" aria-hidden />;
-  return <BlockSceneInner onFail={() => setMode("fallback")} />;
+  return <BlockSceneInner onFail={onFail} />;
 }

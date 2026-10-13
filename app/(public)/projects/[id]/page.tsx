@@ -89,7 +89,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
           {/* Gallery */}
           {project.gallery.map((src, i) => (
-            <Reveal key={src + i} y={60}><figure className="cs-shot"><img src={src} alt={`${project.title} — image ${i + 1}`} loading="lazy" /></figure></Reveal>
+            <Reveal key={src + i} y={60}><figure className="cs-shot"><img src={src} alt={`${project.title} — image ${i + 1}`} loading="lazy" decoding="async" /></figure></Reveal>
           ))}
 
           {/* Always-available section so a sparse project still reads as a case study */}

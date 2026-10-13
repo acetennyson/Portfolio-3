@@ -70,7 +70,7 @@ export default function BlockSceneInner({ onFail }: { onFail?: () => void }) {
       const gl = renderer.getContext();
       const ext = gl.getExtension("WEBGL_debug_renderer_info");
       const name = ext ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : "";
-      if (/swiftshader|llvmpipe|software/i.test(name)) { renderer.dispose(); onFail?.(); return; }
+      if (/swiftshader|llvmpipe|software/i.test(name)) { renderer.dispose(); renderer.forceContextLoss(); onFail?.(); return; }
     } catch { /* ignore */ }
 
     const maxPR = isMobile ? 1.5 : 2;
@@ -82,6 +82,9 @@ export default function BlockSceneInner({ onFail }: { onFail?: () => void }) {
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
     const canvas = renderer.domElement;
+    // GPU reset / too many contexts: drop to the static composition instead of leaving a frozen black canvas.
+    const onLost = (e: Event) => { e.preventDefault(); onFail?.(); };
+    canvas.addEventListener("webglcontextlost", onLost);
     canvas.style.opacity = "0";
     canvas.style.transition = "opacity 1.2s cubic-bezier(.22,1,.36,1)";
     container.appendChild(canvas);
@@ -371,7 +374,9 @@ export default function BlockSceneInner({ onFail }: { onFail?: () => void }) {
       floor.geometry.dispose(); (floor.material as THREE.Material).dispose();
       roomEnv.traverse((o) => { const m = o as THREE.Mesh; m.geometry?.dispose?.(); (m.material as THREE.Material | undefined)?.dispose?.(); });
       envRT.dispose(); pmrem.dispose();
+      canvas.removeEventListener("webglcontextlost", onLost);
       composer.dispose(); renderer.dispose();
+      renderer.forceContextLoss(); // release the GPU context now rather than waiting for GC (browsers cap live contexts)
       if (canvas.parentNode === container) container.removeChild(canvas);
     };
   }, [onFail]);

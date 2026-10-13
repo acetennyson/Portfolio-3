@@ -26,30 +26,34 @@ export default function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>("system");
 
   useEffect(() => {
-    const stored = (localStorage.getItem("theme") as Theme) ?? "system";
+    let stored: Theme = "system";
+    try { stored = (localStorage.getItem("theme") as Theme) ?? "system"; } catch { /* storage blocked */ }
     setTheme(stored);
     applyTheme(stored);
   }, []);
 
   function set(t: Theme) {
     setTheme(t);
-    localStorage.setItem("theme", t);
+    try { localStorage.setItem("theme", t); } catch { /* storage blocked */ }
     applyTheme(t);
   }
 
-  const options: { value: Theme; icon: React.ReactNode }[] = [
-    { value: "system", icon: <Monitor size={13} /> },
-    { value: "light", icon: <Sun size={13} /> },
-    { value: "dark", icon: <Moon size={13} /> },
+  const options: { value: Theme; label: string; icon: React.ReactNode }[] = [
+    { value: "system", label: "Match system theme", icon: <Monitor size={13} aria-hidden /> },
+    { value: "light", label: "Light theme", icon: <Sun size={13} aria-hidden /> },
+    { value: "dark", label: "Dark theme", icon: <Moon size={13} aria-hidden /> },
   ];
 
   return (
-    <div className="flex items-center gap-0.5 rounded-full p-1" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
-      {options.map(({ value, icon }) => (
+    <div role="group" aria-label="Colour theme" className="flex items-center gap-0.5 rounded-full p-1" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+      {options.map(({ value, label, icon }) => (
         <button
           key={value}
+          type="button"
           onClick={() => set(value)}
-          title={value}
+          title={label}
+          aria-label={label}
+          aria-pressed={theme === value}
           className="rounded-full p-1.5 transition-all duration-200"
           style={theme === value
             ? { background: "var(--accent)", color: "#0c0c0d" }
