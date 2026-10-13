@@ -1,5 +1,7 @@
 "use client";
 import { useState, useRef, useCallback } from "react";
+import ToolShell from "../../../../components/shell/ToolShell";
+import { getTool } from "../../../../lib/tools";
 
 const buttons = [
   ["C", "±", "%", "÷"],
@@ -16,7 +18,7 @@ interface Ripple { id: number; x: number; y: number; }
 
 const COLORS = ["#8b5cf6", "#3b82f6", "#ec4899", "#06b6d4", "#a78bfa"];
 
-export default function Calculator() {
+function Calculator() {
   const [display, setDisplay] = useState("0");
   const [expr, setExpr] = useState("");
   const [fresh, setFresh] = useState(false);
@@ -171,5 +173,13 @@ export default function Calculator() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function CalculatorPage() {
+  return (
+    <ToolShell tool={getTool("calculator")!}>
+      <Calculator />
+    </ToolShell>
   );
 }

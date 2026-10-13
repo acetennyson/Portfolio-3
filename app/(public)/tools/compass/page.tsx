@@ -1,12 +1,14 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import ToolShell from "../../../../components/shell/ToolShell";
+import { getTool } from "../../../../lib/tools";
 
 function getCardinal(deg: number) {
   const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
   return dirs[Math.round(deg / 22.5) % 16];
 }
 
-export default function Compass() {
+function Compass() {
   const [heading, setHeading] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [supported, setSupported] = useState(true);
@@ -160,5 +162,13 @@ export default function Compass() {
         Most desktop browsers block orientation access even if hardware is present.
       </p>
     </div>
+  );
+}
+
+export default function CompassPage() {
+  return (
+    <ToolShell tool={getTool("compass")!}>
+      <Compass />
+    </ToolShell>
   );
 }

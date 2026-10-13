@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { Search, MapPin, Wind, Droplets, Eye, Thermometer, Navigation } from "lucide-react";
+import ToolShell from "../../../../components/shell/ToolShell";
+import { getTool } from "../../../../lib/tools";
 
 type WeatherData = {
   location: string;
@@ -98,7 +100,7 @@ async function fetchWeather(lat: number, lon: number, name: string): Promise<Wea
   };
 }
 
-export default function WeatherForecast() {
+function WeatherForecast() {
   const [query, setQuery] = useState("");
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -243,5 +245,13 @@ export default function WeatherForecast() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function WeatherPage() {
+  return (
+    <ToolShell tool={getTool("weather")!}>
+      <WeatherForecast />
+    </ToolShell>
   );
 }

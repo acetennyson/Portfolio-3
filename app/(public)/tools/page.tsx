@@ -1,36 +1,28 @@
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import SplitReveal from "../../../components/motion/SplitReveal";
+import Reveal from "../../../components/motion/Reveal";
+import LabGrid from "../../../components/lab/LabGrid";
+import { tools } from "../../../lib/tools";
 
-const tools = [
-  { name: "Calculator", desc: "A sleek calculator for quick maths.", href: "/tools/calculator", emoji: "🧮" },
-  { name: "Dice Roller", desc: "3D physics-based dice roller.", href: "/tools/dice", emoji: "🎲" },
-  { name: "Weather Forecast", desc: "Search by city, ZIP, IP, or coordinates. 7-day forecast.", href: "/tools/weather", emoji: "🌤️" },
-  { name: "Compass", desc: "Real-time compass using device orientation.", href: "/tools/compass", emoji: "🧭" },
-  { name: "Universal Converter", desc: "Currency, length, weight, temperature, time & more.", href: "/tools/converter", emoji: "🔄" },
-  { name: "World Clock", desc: "Multiple timezones with analog, digital, minimal & neon styles.", href: "/tools/world-clock", emoji: "🕐" },
-  { name: "BMI Tracker", desc: "Calculate BMI with gauge, healthy range & health tips.", href: "/tools/bmi", emoji: "⚖️" },
-];
+export const metadata = {
+  title: "Lab",
+  description: "Small tools and experiments, built from scratch and shipped for fun.",
+};
 
 export default function ToolsPage() {
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="mb-12">
-        <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "var(--accent)" }}>Utilities</p>
-        <h1 className="text-5xl font-black tracking-tight grad-text">Tools</h1>
-        <p className="mt-3 text-base" style={{ color: "var(--fg-muted)" }}>A collection of useful tools I've built.</p>
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2">
-        {tools.map(({ name, desc, href, emoji }) => (
-          <Link key={href} href={href} className="card group p-6 flex items-center gap-4">
-            <span className="text-3xl">{emoji}</span>
-            <div className="flex-1">
-              <h2 className="font-bold text-base" style={{ color: "var(--fg)" }}>{name}</h2>
-              <p className="text-sm mt-0.5" style={{ color: "var(--fg-muted)" }}>{desc}</p>
-            </div>
-            <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" style={{ color: "var(--fg-muted)" }} />
-          </Link>
-        ))}
-      </div>
-    </div>
+    <section className="n-page">
+      <Reveal immediate delay={100} className="n-page-top label">
+        <span>( Lab )</span>
+        <span>{String(tools.length).padStart(2, "0")} tools</span>
+      </Reveal>
+      <SplitReveal as="h1" className="n-page-title" immediate delay={200} stagger={90} text="The *Lab*" />
+      <Reveal immediate delay={500}>
+        <p className="n-page-lead">
+          Small, self-contained tools I built for practice and for fun — every one of them live and working,
+          no placeholders.
+        </p>
+      </Reveal>
+      <LabGrid />
+    </section>
   );
 }

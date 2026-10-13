@@ -1,5 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+import ToolShell from "../../../../components/shell/ToolShell";
+import { getTool } from "../../../../lib/tools";
 
 // ── Category definitions ──────────────────────────────────────────────────────
 
@@ -154,7 +156,7 @@ function fmt(n: number): string {
   return s;
 }
 
-export default function UniversalConverter() {
+function UniversalConverter() {
   const [catIdx, setCatIdx] = useState(0);
   const [fromIdx, setFromIdx] = useState(0);
   const [toIdx, setToIdx] = useState(1);
@@ -292,5 +294,13 @@ export default function UniversalConverter() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ConverterPage() {
+  return (
+    <ToolShell tool={getTool("converter")!}>
+      <UniversalConverter />
+    </ToolShell>
   );
 }

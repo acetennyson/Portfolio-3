@@ -2,6 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
+import ToolShell from "../../../../components/shell/ToolShell";
+import { getTool } from "../../../../lib/tools";
 
 // Dot positions for each face (1-6), normalized -0.5..0.5 on face plane
 const DOT_LAYOUTS: [number, number][][] = [
@@ -75,7 +77,7 @@ function getFaceUp(q: CANNON.Quaternion): number {
   return bestVal;
 }
 
-export default function DiceRoller() {
+function DiceRoller() {
   const mountRef = useRef<HTMLDivElement>(null);
   const stateRef = useRef<{
     renderer: THREE.WebGLRenderer;
@@ -287,5 +289,13 @@ export default function DiceRoller() {
         {rolling ? "Rolling…" : "🎲 Roll Dice"}
       </button>
     </div>
+  );
+}
+
+export default function DicePage() {
+  return (
+    <ToolShell tool={getTool("dice")!}>
+      <DiceRoller />
+    </ToolShell>
   );
 }

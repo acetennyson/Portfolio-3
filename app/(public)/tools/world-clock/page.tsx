@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Plus, X } from "lucide-react";
+import ToolShell from "../../../../components/shell/ToolShell";
+import { getTool } from "../../../../lib/tools";
 
 const TIMEZONES = [
   { city: "New York", tz: "America/New_York", flag: "🇺🇸" },
@@ -419,7 +421,7 @@ function ClockCard({ entry, style, onRemove }: {
   );
 }
 
-export default function WorldClock() {
+function WorldClock() {
   const [, setTick] = useState(0);
   const [style, setStyle] = useState<ClockStyle>("rolex");
   const [clocks, setClocks] = useState(["America/New_York","Europe/London","Asia/Tokyo"]);
@@ -543,5 +545,13 @@ export default function WorldClock() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function WorldClockPage() {
+  return (
+    <ToolShell tool={getTool("world-clock")!}>
+      <WorldClock />
+    </ToolShell>
   );
 }

@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import ToolShell from "../../../../components/shell/ToolShell";
+import { getTool } from "../../../../lib/tools";
 
 type Unit = "metric" | "imperial";
 
@@ -22,7 +24,7 @@ function bmiToAngle(bmi: number) {
   return ((clamped - 10) / 30) * 180 - 90;
 }
 
-export default function BMITracker() {
+function BMITracker() {
   const [unit, setUnit] = useState<Unit>("metric");
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
@@ -252,5 +254,13 @@ export default function BMITracker() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function BmiPage() {
+  return (
+    <ToolShell tool={getTool("bmi")!}>
+      <BMITracker />
+    </ToolShell>
   );
 }
