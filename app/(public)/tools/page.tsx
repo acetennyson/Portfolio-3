@@ -5,7 +5,9 @@ import { tools } from "../../../lib/tools";
 
 export const metadata = {
   title: "Lab",
-  description: "Small tools and experiments, built from scratch and shipped for fun.",
+  description: "Small tools and experiments, built from scratch and shipped for fun, by Ado Daniel Nji.",
+  alternates: { canonical: "/tools" },
+  openGraph: { type: "website", url: "/tools", title: "The Lab — Ado Daniel Nji", description: "Small tools and experiments, built from scratch and shipped for fun." },
 };
 
 export default function ToolsPage() {

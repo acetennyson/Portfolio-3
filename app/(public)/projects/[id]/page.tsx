@@ -23,7 +23,30 @@ async function load(id: string) {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const p = await load(id);
-  return p ? { title: p.title, description: p.description } : { title: "Project" };
+  if (!p) return { title: "Project" };
+
+  const url = `/projects/${p.id}`;
+  const description = p.description || `${p.title} — a project by Ado Daniel Nji.`;
+
+  return {
+    title: p.title,
+    description,
+    keywords: p.tags,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      url,
+      title: p.title,
+      description,
+      images: p.cover ? [{ url: p.cover, width: 1200, height: 630, alt: p.title }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: p.title,
+      description,
+      images: p.cover ? [p.cover] : undefined,
+    },
+  };
 }
 
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
@@ -44,8 +67,32 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     ["Status", project.status],
   ];
 
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.title,
+    description: project.description,
+    url: `${SITE_URL}/projects/${project.id}`,
+    image: project.cover,
+    creator: { "@type": "Person", name: "Ado Daniel Nji" },
+    keywords: project.tags.join(", "),
+    ...(project.year ? { dateCreated: project.year } : {}),
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Projects", item: `${SITE_URL}/projects` },
+      { "@type": "ListItem", position: 3, name: project.title, item: `${SITE_URL}/projects/${project.id}` },
+    ],
+  };
+
   return (
     <article className="cs">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <header className="cs-head">
         <Reveal immediate delay={100} className="n-page-top label">
           <Link href="/projects" className="cs-back"><ArrowLeft size={14} /> All work</Link>

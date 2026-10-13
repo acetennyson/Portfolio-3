@@ -5,7 +5,12 @@ import BlogIndex from "../../../components/blog/BlogIndex";
 import { blogView } from "../../../lib/blog";
 
 export const revalidate = 60;
-export const metadata = { title: "Writing", description: "Articles, tutorials and notes on design, development and everything in between." };
+export const metadata = {
+  title: "Writing",
+  description: "Articles, tutorials and notes on full-stack development, design and AI by Ado Daniel Nji.",
+  alternates: { canonical: "/blog" },
+  openGraph: { type: "website", url: "/blog", title: "Writing — Ado Daniel Nji", description: "Articles, tutorials and notes on design, development and everything in between." },
+};
 
 export default async function BlogPage() {
   const raw = await getBlogs().catch(() => []);

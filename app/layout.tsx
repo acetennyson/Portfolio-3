@@ -7,19 +7,93 @@ import "@fontsource/instrument-serif/400-italic.css";
 import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-const DESCRIPTION = "Designer & developer crafting high-performance digital products.";
+const NAME = "Ado Daniel Nji";
+const TITLE = "Ado Daniel Nji — Full-Stack Developer & Designer";
+const DESCRIPTION =
+  "Ado Daniel Nji (IAmSupreme) is a solo full-stack developer and designer in Douala, Cameroon, building high-performance web apps, mobile apps and AI agent systems. Founder of Beta Gamer, JobHub Cameroon and Axir.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: "Ado Daniel NJ — Full-Stack Developer & Designer", template: "%s — Ado Daniel NJ" },
+  title: { default: TITLE, template: "%s — Ado Daniel Nji" },
   description: DESCRIPTION,
+  keywords: [
+    "Ado Daniel Nji",
+    "IAmSupreme",
+    "full-stack developer",
+    "full-stack developer Cameroon",
+    "software developer Douala",
+    "React developer",
+    "Next.js developer",
+    "mobile app developer",
+    "AI agent developer",
+    "freelance developer Africa",
+    "web designer portfolio",
+  ],
+  authors: [{ name: NAME, url: SITE_URL }],
+  creator: NAME,
+  publisher: NAME,
+  category: "technology",
+  applicationName: NAME,
+  referrer: "origin-when-cross-origin",
+  formatDetection: { email: false, address: false, telephone: false },
+  alternates: { canonical: "/" },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+  },
   openGraph: {
     type: "website",
-    siteName: "Ado Daniel NJ",
-    title: "Ado Daniel NJ — Full-Stack Developer & Designer",
+    url: SITE_URL,
+    siteName: NAME,
+    title: TITLE,
     description: DESCRIPTION,
+    locale: "en_US",
   },
-  twitter: { card: "summary_large_image", title: "Ado Daniel NJ — Full-Stack Developer & Designer", description: DESCRIPTION },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+    creator: "@AdoNj84371",
+  },
+  verification: {
+    // Paste the verification codes from Google Search Console / Bing Webmaster Tools here once you register the property.
+    // google: "your-google-site-verification-code",
+    // other: { "msvalidate.01": "your-bing-verification-code" },
+  },
+};
+
+const PERSON_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: NAME,
+  alternateName: "IAmSupreme",
+  url: SITE_URL,
+  jobTitle: "Full-Stack Developer & Designer",
+  description: DESCRIPTION,
+  address: { "@type": "PostalAddress", addressLocality: "Douala", addressCountry: "CM" },
+  sameAs: [
+    "https://github.com/acetennyson",
+    "https://x.com/AdoNj84371",
+    "https://www.linkedin.com/in/iamsupreme/",
+    "https://www.facebook.com/iamsupreme0",
+    "https://dev.to/adodanieln",
+  ],
+  knowsAbout: ["Full-Stack Development", "React", "Next.js", "Mobile Development", "AI Agents", "UI/UX Design"],
+};
+
+const WEBSITE_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: NAME,
+  url: SITE_URL,
+  description: DESCRIPTION,
+  publisher: { "@type": "Person", name: NAME },
+  potentialAction: {
+    "@type": "SearchAction",
+    target: `${SITE_URL}/blog?q={search_term_string}`,
+    "query-input": "required name=search_term_string",
+  },
 };
 
 export const viewport: Viewport = {
@@ -37,6 +111,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className="min-h-screen flex flex-col antialiased">
         <Script id="theme-init" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: INIT }} />
+        {/* Plain <script> (not next/script) so this JSON-LD is present in the initial server-rendered
+            HTML rather than injected after hydration — crawlers that don't execute JS still see it. */}
+        <script
+          id="ld-person"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(PERSON_JSONLD) }}
+        />
+        <script
+          id="ld-website"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSONLD) }}
+        />
         {children}
       </body>
     </html>

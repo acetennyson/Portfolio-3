@@ -47,7 +47,7 @@ export default function WorkList({ items, startIndex = 0 }: { items: WorkItem[];
               <span className="n-work-main">
                 <span className="n-work-title">{it.title}</span>
                 {it.blurb && <span className="n-work-blurb">{it.blurb}</span>}
-                {touch && (it.live || it.cover) && <PreviewImage className="n-work-thumb is-loaded" liveUrl={it.live} cover={it.cover} />}
+                {touch && (it.live || it.cover) && <PreviewImage className="n-work-thumb is-loaded" liveUrl={it.live} cover={it.cover} alt={it.title} />}
               </span>
               <span className="n-work-tags label">{it.tags.slice(0, 3).map((t) => <span key={t}>{t}</span>)}</span>
               <span className="n-work-year label">{it.year}</span>

@@ -54,7 +54,32 @@ function isMdx(content: string): boolean {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const blog: any = await getBlogBySlug(slug).catch(() => null);
-  return blog ? { title: blog.title, description: blog.excerpt } : { title: "Post" };
+  if (!blog) return { title: "Post" };
+
+  const url = `/blog/${slug}`;
+  const description = blog.excerpt || `${blog.title} — an article by Ado Daniel Nji.`;
+
+  return {
+    title: blog.title,
+    description,
+    keywords: Array.isArray(blog.tags) ? blog.tags : undefined,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      url,
+      title: blog.title,
+      description,
+      images: blog.coverImage ? [{ url: blog.coverImage, width: 1200, height: 630, alt: blog.title }] : undefined,
+      publishedTime: blog.createdAt?.toDate?.()?.toISOString?.() || undefined,
+      tags: Array.isArray(blog.tags) ? blog.tags : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: blog.title,
+      description,
+      images: blog.coverImage ? [blog.coverImage] : undefined,
+    },
+  };
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -87,8 +112,33 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     ["Reading time", time],
   ];
 
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: view.title,
+    description: view.excerpt || undefined,
+    image: view.cover,
+    url: `${SITE_URL}/blog/${view.slug}`,
+    datePublished: view.date !== "Just now" ? view.date : undefined,
+    author: { "@type": "Person", name: "Ado Daniel Nji", url: SITE_URL },
+    publisher: { "@type": "Person", name: "Ado Daniel Nji" },
+    keywords: view.tags.join(", "),
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Writing", item: `${SITE_URL}/blog` },
+      { "@type": "ListItem", position: 3, name: view.title, item: `${SITE_URL}/blog/${view.slug}` },
+    ],
+  };
+
   return (
     <article className="cs">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <header className="cs-head">
         <Reveal immediate delay={100} className="n-page-top label">
           <Link href="/blog" className="cs-back"><ArrowLeft size={14} /> All writing</Link>

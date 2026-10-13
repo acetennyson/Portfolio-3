@@ -5,7 +5,12 @@ import ProjectIndex from "../../../components/work/ProjectIndex";
 import { resolveProjects, workItem } from "../../../lib/projects";
 
 export const revalidate = 60;
-export const metadata = { title: "Work", description: "Selected projects, case studies and experiments." };
+export const metadata = {
+  title: "Work",
+  description: "Selected projects, case studies and experiments by Ado Daniel Nji — full-stack web and mobile apps, AI agents and design systems.",
+  alternates: { canonical: "/projects" },
+  openGraph: { type: "website", url: "/projects", title: "Work — Ado Daniel Nji", description: "Selected projects, case studies and experiments." },
+};
 
 export default async function ProjectsPage() {
   const live = await getProjects().catch(() => []);
