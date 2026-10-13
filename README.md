@@ -148,7 +148,24 @@ Content is stored in Firestore with static fallbacks defined in `lib/data.ts`.
 **Projects:** Fetched from Firestore collection `projects`, falls back to `staticProjects`  
 **Blog:** Fetched from Firestore collection `blogs`, falls back to `staticBlogs`
 
-Admin routes use Editor.js for rich content editing with support for headers, paragraphs, lists, and images.
+### Blog Content Formats
+
+The blog system supports three content formats with automatic detection:
+
+1. **MDX** (Markdown + JSX) — Write in Markdown, embed React components for interactivity
+2. **HTML** (legacy) — Raw HTML strings for maximum control
+3. **Editor.js blocks** (legacy) — Structured JSON format
+
+**MDX Custom Components:**
+- `<EmailForm />` — Email collection forms
+- `<Callout />` — Info/warning/error/success boxes
+- `<TwoColumn />` & `<Column />` — Multi-column layouts
+- `<CodeBlock />` — Code snippets with titles
+- `<Figure />` — Images with captions
+- `<Video />` — Video embeds
+- `<Highlight />` — Emphasized text blocks
+
+See `MDX_GUIDE.md` for complete documentation and examples.
 
 ## Performance Considerations
 

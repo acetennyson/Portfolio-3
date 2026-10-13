@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { MDXRemote } from "next-mdx-remote/rsc";
 import { getBlogBySlug, getBlogs } from "../../../../firebase/firestore";
 import { blogView, formatDate, readingTime } from "../../../../lib/blog";
 import SplitReveal from "../../../../components/motion/SplitReveal";
 import Reveal from "../../../../components/motion/Reveal";
 import CoverParallax from "../../../../components/work/CoverParallax";
 import BlockRenderer from "../../../../components/renderers/BlockRenderer";
+import { MDXComponents } from "../../../../components/mdx/MDXComponents";
 
 function prepareHtml(html: string): string {
   return html.replace(/\b(?:not-)?dark:[^\s"'>]+/g, "").replace(/\s{2,}/g, " ").trim();
@@ -21,6 +23,32 @@ function extractHeadings(html: string): { level: number; text: string }[] {
     if (text) headings.push({ level: Number(match[1]), text });
   }
   return headings;
+}
+
+function extractHeadingsFromMdx(mdx: string): { level: number; text: string }[] {
+  const headings: { level: number; text: string }[] = [];
+  const lines = mdx.split('\n');
+  
+  for (const line of lines) {
+    const match = line.match(/^(#{1,3})\s+(.+)$/);
+    if (match) {
+      const level = match[1].length;
+      const text = match[2].trim();
+      if (level <= 3) headings.push({ level, text });
+    }
+  }
+  
+  return headings;
+}
+
+function isHtml(content: string): boolean {
+  return content.trim().startsWith('<');
+}
+
+function isMdx(content: string): boolean {
+  // MDX if it contains JSX components (starts with < but not HTML tags)
+  // or contains markdown heading syntax
+  return content.includes('<') || /^#{1,6}\s/.test(content);
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -40,9 +68,19 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const num = String((idx < 0 ? 0 : idx) + 1).padStart(2, "0");
 
   const view = blogView(blog);
-  const processedContent = typeof blog.content === "string" ? prepareHtml(blog.content) : null;
-  const headings = processedContent ? extractHeadings(blog.content as string) : [];
-  const time = readingTime(processedContent ?? JSON.stringify(blog.content?.blocks || ""));
+  const contentString = typeof blog.content === "string" ? blog.content : null;
+  const isHtmlContent = contentString ? isHtml(contentString) : false;
+  const processedContent = isHtmlContent ? prepareHtml(contentString!) : null;
+  
+  // Extract headings based on content type
+  let headings: { level: number; text: string }[] = [];
+  if (isHtmlContent && contentString) {
+    headings = extractHeadings(contentString);
+  } else if (contentString && !isHtmlContent) {
+    headings = extractHeadingsFromMdx(contentString);
+  }
+  
+  const time = readingTime(contentString ?? JSON.stringify(blog.content?.blocks || ""));
 
   const meta: [string, string | undefined][] = [
     ["Published", view.date],
@@ -89,8 +127,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <Reveal y={40}>
             <div className="cs-block blog-content">
               {processedContent !== null ? (
+                // Legacy HTML content
                 <div dangerouslySetInnerHTML={{ __html: processedContent }} />
+              ) : contentString && !isHtmlContent ? (
+                // MDX content with custom components
+                <MDXRemote source={contentString} components={MDXComponents} />
               ) : (
+                // Editor.js blocks (legacy)
                 <BlockRenderer blocks={blog.content?.blocks || []} />
               )}
             </div>
