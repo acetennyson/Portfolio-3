@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useRef } from "react";
 import { animate, stagger } from "animejs";
-import { prefersReducedMotion, whenReady } from "../../lib/motion";
+import { onEnterView, prefersReducedMotion, whenReadySafe } from "../../lib/motion";
 
 type Props = {
   text: string; // "I build things *people love*"  -> *x* renders as italic serif accent
@@ -51,10 +51,14 @@ export default function SplitReveal({
     }
 
     let cancelled = false;
-    let io: IntersectionObserver | null = null;
+    let stop: (() => void) | null = null;
 
-    const play = () => {
+    const play = (alreadyPassed = false) => {
       if (cancelled) return;
+      if (alreadyPassed) {
+        inners.forEach((n) => (n.style.transform = "none"));
+        return;
+      }
       animate(inners, {
         translateY: ["112%", "0%"],
         duration: 1100,
@@ -63,24 +67,15 @@ export default function SplitReveal({
       });
     };
 
-    whenReady().then(() => {
+    whenReadySafe().then(() => {
       if (cancelled) return;
       if (immediate) return play();
-      io = new IntersectionObserver(
-        (entries) => {
-          if (entries.some((e) => e.isIntersecting)) {
-            io?.disconnect();
-            play();
-          }
-        },
-        { threshold: 0.2 }
-      );
-      io.observe(el);
+      stop = onEnterView(el, play);
     });
 
     return () => {
       cancelled = true;
-      io?.disconnect();
+      stop?.();
     };
   }, [delay, step, immediate, text]);
 

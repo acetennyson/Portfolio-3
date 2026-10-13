@@ -108,6 +108,7 @@ body::after {
 .sr-i { display: inline-block; will-change: transform; }
 .js .sr-i { transform: translateY(112%); }
 .js .rv { opacity: 0; }
+@media print { .js .rv { opacity: 1 !important; transform: none !important; } .js .sr-i { transform: none !important; } }
 
 /* ───────── Loader ───────── */
 .loader {

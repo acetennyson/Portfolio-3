@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { animate } from "animejs";
-import { prefersReducedMotion, whenReady } from "../../lib/motion";
+import { onEnterView, prefersReducedMotion, whenReadySafe } from "../../lib/motion";
 
 export default function Reveal({
   children,
@@ -21,36 +21,50 @@ export default function Reveal({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (prefersReducedMotion()) {
+
+    // `.js .rv { opacity: 0 }` hides us; this is the one place that undoes it.
+    const show = () => {
       el.style.opacity = "1";
-      el.style.transform = "none";
+      el.style.transform = "";
+    };
+
+    if (prefersReducedMotion()) {
+      show();
       return;
     }
-    let cancelled = false;
-    let io: IntersectionObserver | null = null;
-    const play = () =>
-      animate(el, { opacity: [0, 1], translateY: [y, 0], duration: 1100, delay, ease: "outExpo" });
 
-    whenReady().then(() => {
+    let cancelled = false;
+    let stop: (() => void) | null = null;
+
+    const play = (alreadyPassed = false) => {
       if (cancelled) return;
-      if (immediate) {
-        play();
-        return;
+      if (alreadyPassed) return show();
+      // Big blocks (whole articles) fade only: sliding 600px of text looks broken
+      // and a lingering transform would trap sticky/fixed descendants.
+      const tall = el.offsetHeight > window.innerHeight * 1.5;
+      try {
+        animate(el, {
+          opacity: [0, 1],
+          ...(tall ? {} : { translateY: [y, 0] }),
+          duration: tall ? 600 : 1100,
+          delay,
+          ease: "outExpo",
+          onComplete: show, // drop the leftover transform, pin opacity to 1
+        });
+      } catch {
+        show(); // animation failed -> never leave content invisible
       }
-      io = new IntersectionObserver(
-        (entries) => {
-          if (entries.some((e) => e.isIntersecting)) {
-            io?.disconnect();
-            play();
-          }
-        },
-        { threshold: 0.15 }
-      );
-      io.observe(el);
+    };
+
+    whenReadySafe().then(() => {
+      if (cancelled) return;
+      if (immediate) return play();
+      stop = onEnterView(el, play);
     });
+
     return () => {
       cancelled = true;
-      io?.disconnect();
+      stop?.();
     };
   }, [delay, y, immediate]);
 
