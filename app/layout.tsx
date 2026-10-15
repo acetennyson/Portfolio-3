@@ -15,9 +15,9 @@ const BING_SITE_VERIFICATION = process.env.BING_SITE_VERIFICATION;
 const YANDEX_SITE_VERIFICATION = process.env.YANDEX_SITE_VERIFICATION;
 const PINTEREST_SITE_VERIFICATION = process.env.PINTEREST_SITE_VERIFICATION;
 const NAME = "Ado Daniel Nji";
-const TITLE = "Ado Daniel Nji — Full-Stack Developer & Designer";
+const TITLE = "Ado Daniel Nj | Full-Stack Developer";
 const DESCRIPTION =
-  "Ado Daniel Nji (IAmSupreme) is a solo full-stack developer and designer in Douala, Cameroon, building high-performance web apps, mobile apps and AI agent systems. Founder of Beta Gamer, JobHub Cameroon and Axir.";
+  "Ado Daniel Nji is a solo full-stack developer in Douala, Cameroon, building high-performance web apps, mobile apps and AI agent systems. Beta Gamer, JobHub Cameroon and Axir.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
