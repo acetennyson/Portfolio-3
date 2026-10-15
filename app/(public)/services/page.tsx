@@ -102,7 +102,7 @@ const NOT_YET = [
   "You need to hire and manage an entire team at once — I join or lead a build, not staff one.",
   "You need 24/7 on-call coverage — that's a different kind of arrangement.",
   "The ask is pure visual/graphic design with no software behind it.",
-  "There's no budget range in mind yet and no appetite for a scoping call.",
+  "The opening offer is \"that's a lot for your region\" — the rate doesn't move based on where I'm sitting.",
 ];
 
 const FAQ = [
@@ -121,6 +121,10 @@ const FAQ = [
   {
     q: "Do you work with clients outside Cameroon?",
     a: "Yes — most engagements are remote and async, in English, across time zones. Payment can be arranged in USD or locally depending on where you're based.",
+  },
+  {
+    q: "Why not price lower, given where you're based?",
+    a: "Cost of living where the work happens doesn't change what a feature costs to build well, or what it's worth to the business using it. Rates here track the same market as freelance engineers anywhere else doing comparable work — they're not a regional discount.",
   },
   {
     q: "Is there support after launch?",
@@ -230,6 +234,10 @@ export default function ServicesPage() {
           Ranges are a starting point — actual cost depends on scope, and every quote follows a short
           discovery call rather than a form. Rates can flex for students, early-stage founders and
           registered nonprofits — just say so.
+        </p>
+        <p style={{ color: "var(--fg-muted)", fontSize: "0.9rem", marginTop: "0.6rem", maxWidth: "40rem" }}>
+          These are set by scope and market value, not by location — the same build costs the same
+          whether the brief comes from Douala, Lagos or San Francisco.
         </p>
         <p style={{ color: "var(--fg-muted)", fontSize: "0.9rem", marginTop: "0.6rem", maxWidth: "40rem" }}>
           Joining an existing team instead of running a standalone build? Day-rate and sprint-based
