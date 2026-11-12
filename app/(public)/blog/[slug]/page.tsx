@@ -9,6 +9,7 @@ import Reveal from "../../../../components/motion/Reveal";
 import CoverParallax from "../../../../components/work/CoverParallax";
 import BlockRenderer from "../../../../components/renderers/BlockRenderer";
 import { MDXComponents } from "../../../../components/mdx/MDXComponents";
+import { PostProvider } from "../../../../components/mdx/PostContext";
 
 function prepareHtml(html: string): string {
   return html.replace(/\b(?:not-)?dark:[^\s"'>]+/g, "").replace(/\s{2,}/g, " ").trim();
@@ -181,7 +182,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 <div dangerouslySetInnerHTML={{ __html: processedContent }} />
               ) : contentString && !isHtmlContent ? (
                 // MDX content with custom components
-                <MDXRemote source={contentString} components={MDXComponents} />
+                <PostProvider slug={slug}>
+                  <MDXRemote 
+                    source={contentString} 
+                    components={MDXComponents}
+                  />
+                </PostProvider>
               ) : (
                 // Editor.js blocks (legacy)
                 <BlockRenderer blocks={blog.content?.blocks || []} />

@@ -1,5 +1,18 @@
 import React from "react";
 import { EmailForm } from "./EmailForm";
+import { 
+  CourseProgress, 
+  ModuleCard, 
+  VocabTable,
+  VocabRow,
+  Principle, 
+  PhaseCard,
+  CheckYourself,
+  Outcome,
+  TechStack,
+  TechItem,
+  CodeCompare
+} from "./CourseComponents";
 
 // Custom MDX components that can be used in blog posts.
 //
@@ -120,4 +133,17 @@ export const MDXComponents = {
       </div>
     );
   },
+
+  // Course-specific components
+  CourseProgress,
+  ModuleCard,
+  VocabTable,
+  VocabRow,
+  Principle,
+  PhaseCard,
+  CheckYourself,
+  Outcome,
+  TechStack,
+  TechItem,
+  CodeCompare,
 };
