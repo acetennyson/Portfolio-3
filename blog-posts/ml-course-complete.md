@@ -5,9 +5,9 @@ Learn machine learning the way builders learn best: run something, watch it work
 This course teaches machine learning in the order a builder learns best. Written for someone fluent in web/app development who met the math in university but never saw it used. Every module builds on the one before it, starting from lists of numbers and the distance between them.
 
 <CourseProgress 
-  phase1="Seeing the Idea" modules1="1-3" hours1={26}
-  phase2="Letting the Program Learn" modules2="4-7" hours2={36}
-  phase3="Trusting It and Using It" modules3="8-10" hours3={32}
+  phase1="Seeing the Idea" modules1="1-3" hours1="26"
+  phase2="Letting the Program Learn" modules2="4-7" hours2="36"
+  phase3="Trusting It and Using It" modules3="8-10" hours3="32"
 />
 
 ---
@@ -76,7 +76,7 @@ Most ML jargon names something you already use in code.
   phase="Phase 1: Seeing the Idea"
   modules="1-3"
   description="Classify signals by distance and make a program improve itself by measuring its own error. Everything runs in the browser in JavaScript — nothing to install."
-  hours={26}
+  hours="26"
 />
 
 ### Module 1: Numbers as Patterns
@@ -84,7 +84,7 @@ Most ML jargon names something you already use in code.
 <ModuleCard 
   number="M1"
   title="Numbers as Patterns"
-  hours={6}
+  hours="6"
   objective="Explain a vector as an array and compute how far apart two of them are."
 >
 
@@ -112,7 +112,7 @@ Without looking, write distance() and explain why the differences are squared.
 <ModuleCard 
   number="M2"
   title="Learning From Examples with Nearest Neighbours"
-  hours={10}
+  hours="10"
   objective="Build a classifier that labels new data by comparing it with saved, labeled examples, and measure how often it's right."
 >
 
@@ -141,7 +141,7 @@ Split your examples 80/20 and report accuracy and a confusion matrix for k = 1, 
 <ModuleCard 
   number="M3"
   title="Learning by Adjusting, Fitting a Line"
-  hours={10}
+  hours="10"
   objective="Make a program improve itself by repeatedly measuring its error and nudging its numbers."
 >
 
@@ -172,7 +172,7 @@ For a dataset of 3 points, work out the two gradients by hand and match what you
   phase="Phase 2: Letting the Program Learn"
   modules="4-7"
   description="Write a small neural network and its training loop yourself. After this phase, Karpathy's micrograd video will read as familiar code."
-  hours={36}
+  hours="36"
 />
 
 ### Module 4: From JavaScript to Python and NumPy
@@ -180,7 +180,7 @@ For a dataset of 3 points, work out the two gradients by hand and match what you
 <ModuleCard 
   number="M4"
   title="From JavaScript to Python and NumPy"
-  hours={8}
+  hours="8"
   objective="Rewrite your earlier projects in Python so you can read the code in most ML tutorials."
 >
 
@@ -218,7 +218,7 @@ Explain np.sqrt(((a - b) ** 2).sum()) to someone who only knows JavaScript.
 <ModuleCard 
   number="M5"
   title="Yes or No, Logistic Regression"
-  hours={8}
+  hours="8"
   objective="Turn a number into a probability and train a model that answers yes or no."
 >
 
@@ -245,7 +245,7 @@ Predict by hand what sigmoid gives for -2, 0 and 2, and say what each result mea
 <ModuleCard 
   number="M6"
   title="The Neuron"
-  hours={6}
+  hours="6"
   objective="Build a single artificial neuron and show that it's Module 5's model under a new name."
 >
 
@@ -269,7 +269,7 @@ Choose weights by hand so one neuron computes AND, then change them so it comput
 <ModuleCard 
   number="M7"
   title="Networks and Backpropagation"
-  hours={14}
+  hours="14"
   objective="Train a small neural network from scratch and explain every line of its training loop."
 >
 
@@ -303,7 +303,7 @@ Watch Karpathy's micrograd video now. The Neuron, Layer and MLP classes should l
   phase="Phase 3: Trusting It and Using It"
   modules="8-10"
   description="Tell a model that learned from a model that memorized. Use frameworks with confidence. Recognize patterns in sensor data on a small device."
-  hours={32}
+  hours="32"
 />
 
 ### Module 8: Does It Actually Work?
@@ -311,7 +311,7 @@ Watch Karpathy's micrograd video now. The Neuron, Layer and MLP classes should l
 <ModuleCard 
   number="M8"
   title="Does It Actually Work?"
-  hours={8}
+  hours="8"
   objective="Tell a model that learned from a model that memorized."
 >
 
@@ -339,7 +339,7 @@ Shown a pair of training and validation loss curves, say whether the model is ov
 <ModuleCard 
   number="M9"
   title="Frameworks, Now That You Know What They Hide"
-  hours={10}
+  hours="10"
   objective="Use scikit-learn and one deep learning framework with confidence, because you know what each call does underneath."
 >
 
@@ -369,7 +369,7 @@ Open a TensorFlow beginner tutorial and annotate every line with the idea it imp
 <ModuleCard 
   number="M10"
   title="Signals and Small Devices"
-  hours={14}
+  hours="14"
   objective="Recognize patterns in real sensor data and run the recognizer on a small device."
 >
 

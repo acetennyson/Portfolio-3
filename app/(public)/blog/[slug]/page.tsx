@@ -10,6 +10,7 @@ import CoverParallax from "../../../../components/work/CoverParallax";
 import BlockRenderer from "../../../../components/renderers/BlockRenderer";
 import { MDXComponents } from "../../../../components/mdx/MDXComponents";
 import { PostProvider } from "../../../../components/mdx/PostContext";
+import { resolveTheme } from "../../../../components/mdx/courseThemes";
 
 function prepareHtml(html: string): string {
   return html.replace(/\b(?:not-)?dark:[^\s"'>]+/g, "").replace(/\s{2,}/g, " ").trim();
@@ -95,6 +96,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   const view = blogView(blog);
   const contentString = typeof blog.content === "string" ? blog.content : null;
+  const courseTheme = resolveTheme(
+    [slug, view.title, ...(Array.isArray(view.tags) ? view.tags : [])].join(" ")
+  );
   const isHtmlContent = contentString ? isHtml(contentString) : false;
   const processedContent = isHtmlContent ? prepareHtml(contentString!) : null;
   
@@ -182,9 +186,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 <div dangerouslySetInnerHTML={{ __html: processedContent }} />
               ) : contentString && !isHtmlContent ? (
                 // MDX content with custom components
-                <PostProvider slug={slug}>
-                  <MDXRemote 
-                    source={contentString} 
+                <PostProvider slug={slug} theme={courseTheme}>
+                  <MDXRemote
+                    source={contentString}
                     components={MDXComponents}
                   />
                 </PostProvider>

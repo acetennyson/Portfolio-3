@@ -11,7 +11,8 @@ import {
   Outcome,
   TechStack,
   TechItem,
-  CodeCompare
+  CodeCompare,
+  CourseBadge
 } from "./CourseComponents";
 
 // Custom MDX components that can be used in blog posts.
@@ -146,4 +147,5 @@ export const MDXComponents = {
   TechStack,
   TechItem,
   CodeCompare,
+  CourseBadge,
 };

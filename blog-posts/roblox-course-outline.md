@@ -7,10 +7,10 @@ This course teaches Roblox development the way beginners learn best: **build som
 </Callout>
 
 <CourseProgress 
-  phase1="Get Moving" modules1="1-4" hours1={32} color1="#3B82F6"
-  phase2="Make It Feel Like a Game" modules2="5-9" hours2={44} color2="#8B5CF6"
-  phase3="Systems" modules3="10-12" hours3={24} color3="#EC4899"
-  phase4="Ship It" modules4="13-14" hours4={14} color4="#10B981"
+  phase1="Get Moving" modules1="1-4" hours1="32" color1="#3B82F6"
+  phase2="Make It Feel Like a Game" modules2="5-9" hours2="44" color2="#8B5CF6"
+  phase3="Systems" modules3="10-12" hours3="24" color3="#EC4899"
+  phase4="Ship It" modules4="13-14" hours4="14" color4="#10B981"
 />
 
 ## What You'll Build
@@ -58,7 +58,7 @@ A **co-op wave-survival arena**: players fight escalating waves, earn coins, buy
   phase="Phase 1: Get Moving"
   modules="1-4"
   description="Script a secure, server-authoritative arena with a round loop. Learn Studio, Luau from scratch, events, and the wall between client and server."
-  hours={32}
+  hours="32"
   color="#3B82F6"
 />
 
@@ -69,7 +69,7 @@ Build and publish a blocked-out arena in Roblox Studio, starting from zero.
 <ModuleCard 
   number="M1"
   title="Getting Around Studio and Building the Arena"
-  hours={6}
+  hours="6"
   objective="Build and publish a blocked-out arena in Roblox Studio, starting from zero. No prior 3D, game-development or Roblox experience is assumed."
   color="#3B82F6"
 >
@@ -96,7 +96,7 @@ Read and write basic Luau well enough to stop thinking about syntax.
 <ModuleCard 
   number="M2"
   title="Luau From Scratch"
-  hours={8}
+  hours="8"
   objective="Read and write basic Luau, Roblox's scripting language, well enough to stop thinking about syntax. No programming experience assumed."
   color="#3B82F6"
 >
@@ -127,7 +127,7 @@ Make the world react to players and to time.
 <ModuleCard 
   number="M3"
   title="Events, Services and the Game Loop"
-  hours={8}
+  hours="8"
   objective="Make the world react to players and to time, and use that to run a full round of the game."
   color="#3B82F6"
 >
@@ -157,7 +157,7 @@ Draw the round state machine from memory and explain what the game does when a p
 <ModuleCard 
   number="M4"
   title="Client, Server and the Wall Between Them"
-  hours={10}
+  hours="10"
   objective="Understand which code runs where, make the client and server talk to each other, and never trust what the client says."
   color="#3B82F6"
 >
@@ -192,7 +192,7 @@ Write a fake, abusive remote call from the client, then add the server check tha
   phase="Phase 2: Make It Feel Like a Game"
   modules="5-9"
   description="Animate characters, run enemy AI, import your own art, and build custom UI that works on every device."
-  hours={44}
+  hours="44"
   color="#8B5CF6"
 />
 
@@ -208,7 +208,7 @@ Write a fake, abusive remote call from the client, then add the server check tha
   phase="Phase 3: Systems"
   modules="10-12"
   description="Save player data, run an economy, and polish game feel with effects, sound, and camera."
-  hours={24}
+  hours="24"
   color="#EC4899"
 />
 
@@ -220,7 +220,7 @@ Write a fake, abusive remote call from the client, then add the server check tha
   phase="Phase 4: Ship It"
   modules="13-14"
   description="Find and fix what makes the game slow, defend against cheating, and publish to real players."
-  hours={14}
+  hours="14"
   color="#10B981"
 />
 

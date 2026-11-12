@@ -1,15 +1,26 @@
 "use client";
 
 import React from "react";
+import type { CourseTheme } from "./courseThemes";
 
 interface PostContextValue {
   slug: string;
+  /** Visual theme for course components in this post (see courseThemes.ts). */
+  theme?: CourseTheme;
 }
 
 const PostContext = React.createContext<PostContextValue | null>(null);
 
-export function PostProvider({ slug, children }: { slug: string; children: React.ReactNode }) {
-  return <PostContext.Provider value={{ slug }}>{children}</PostContext.Provider>;
+export function PostProvider({
+  slug,
+  theme,
+  children,
+}: {
+  slug: string;
+  theme?: CourseTheme;
+  children: React.ReactNode;
+}) {
+  return <PostContext.Provider value={{ slug, theme }}>{children}</PostContext.Provider>;
 }
 
 export function usePost() {

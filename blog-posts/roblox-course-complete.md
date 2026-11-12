@@ -5,10 +5,10 @@ Build a multiplayer game from zero. No prior 3D, game development, or Roblox exp
 This course teaches Roblox development the way beginners learn best: build something, watch it work, then learn what it's called. By the end, you'll have shipped a complete co-op wave-survival arena game.
 
 <CourseProgress 
-  phase1="Get Moving" modules1="1-4" hours1={32}
-  phase2="Make It Feel Like a Game" modules2="5-9" hours2={44}
-  phase3="Systems" modules3="10-12" hours3={24}
-  phase4="Ship It" modules4="13-14" hours4={14}
+  phase1="Get Moving" modules1="1-4" hours1="32"
+  phase2="Make It Feel Like a Game" modules2="5-9" hours2="44"
+  phase3="Systems" modules3="10-12" hours3="24"
+  phase4="Ship It" modules4="13-14" hours4="14"
 />
 
 ---
@@ -60,7 +60,7 @@ A co-op wave-survival arena: players fight escalating waves, earn coins, buy upg
   phase="Phase 1: Get Moving"
   modules="1-4"
   description="Script a secure, server-authoritative arena with a round loop. Learn Studio, Luau from scratch, events, and the wall between client and server."
-  hours={32}
+  hours="32"
 />
 
 ### Module 1: Getting Around Studio and Building the Arena
@@ -68,7 +68,7 @@ A co-op wave-survival arena: players fight escalating waves, earn coins, buy upg
 <ModuleCard 
   number="M1"
   title="Getting Around Studio and Building the Arena"
-  hours={6}
+  hours="6"
   objective="Build and publish a blocked-out arena in Roblox Studio, starting from zero. No prior 3D, game-development or Roblox experience is assumed."
 >
 
@@ -98,7 +98,7 @@ Without notes, open a blank place, build a walled room with a floor and a spawn 
 <ModuleCard 
   number="M2"
   title="Luau From Scratch"
-  hours={8}
+  hours="8"
   objective="Read and write basic Luau, Roblox's scripting language, well enough to stop thinking about syntax. No programming experience assumed."
 >
 
@@ -136,7 +136,7 @@ Without notes, write a function that returns a weapon's damage from a config tab
 <ModuleCard 
   number="M3"
   title="Events, Services and the Game Loop"
-  hours={8}
+  hours="8"
   objective="Make the world react to players and to time, and use that to run a full round of the game."
 >
 
@@ -168,7 +168,7 @@ Draw the round state machine from memory and explain what the game does when a p
 <ModuleCard 
   number="M4"
   title="Client, Server and the Wall Between Them"
-  hours={10}
+  hours="10"
   objective="Understand which code runs where, make the client and server talk to each other, and never trust what the client says."
 >
 
@@ -209,7 +209,7 @@ Write a fake, abusive remote call from the client, then add the server check tha
   phase="Phase 2: Make It Feel Like a Game"
   modules="5-9"
   description="Animate characters, run enemy AI, import your own art, and build custom UI that works on every device."
-  hours={44}
+  hours="44"
 />
 
 ### Module 5: Characters, Rigs and Animation
@@ -217,7 +217,7 @@ Write a fake, abusive remote call from the client, then add the server check tha
 <ModuleCard 
   number="M5"
   title="Characters, Rigs and Animation"
-  hours={10}
+  hours="10"
   objective="Understand how Roblox characters are built, make your own animations inside Studio, and connect them to gameplay."
 >
 
@@ -250,7 +250,7 @@ Explain why damage should trigger from an animation marker and not a timer, and 
 <ModuleCard 
   number="M6"
   title="Enemies and AI"
-  hours={10}
+  hours="10"
   objective="Build enemies that sense the player, decide what to do, and act, and spawn them in escalating waves."
 >
 
@@ -283,7 +283,7 @@ Add a new enemy type with one new state and no changes to the spawner.
 <ModuleCard 
   number="M7"
   title="Bringing in Your Own Art"
-  hours={8}
+  hours="8"
   objective="Get your own 3D art into the game cleanly. Understand what a 3D model is, make or obtain simple props, import them, and make them work in play."
 >
 
@@ -316,7 +316,7 @@ Take a heavy mesh and get it under budget without wrecking its silhouette.
 <ModuleCard 
   number="M8"
   title="Interface Fundamentals"
-  hours={8}
+  hours="8"
   objective="Build on-screen interfaces that work on phones, tablets, consoles and PCs, and keep them updated with live game data."
 >
 
@@ -348,7 +348,7 @@ Resize the viewport from phone to ultrawide and keep the HUD correct.
 <ModuleCard 
   number="M9"
   title="ForgeGUI, UI That Doesn't Look Default"
-  hours={8}
+  hours="8"
   objective="Use ForgeGUI to create a distinctive interface style and wire the art into the HUD, shop and inventory you built by hand."
 >
 
@@ -383,7 +383,7 @@ Rebuild one screen with a different art style without touching the scripts.
   phase="Phase 3: Systems"
   modules="10-12"
   description="Save player data, run an economy, and polish game feel with effects, sound, and camera."
-  hours={24}
+  hours="24"
 />
 
 ### Module 10: Saving Data
@@ -391,7 +391,7 @@ Rebuild one screen with a different art style without touching the scripts.
 <ModuleCard 
   number="M10"
   title="Saving Data"
-  hours={8}
+  hours="8"
   objective="Save and load player progress reliably, so nothing is lost and nothing is duplicated."
 >
 
@@ -423,7 +423,7 @@ Add a new field to the save format without breaking existing players.
 <ModuleCard 
   number="M11"
   title="Inventory, Upgrades and Economy"
-  hours={10}
+  hours="10"
   objective="Build a data-driven shop, inventory and upgrade system whose economy is fair, balanced and cheat-resistant."
 >
 
@@ -456,7 +456,7 @@ Add a new weapon by editing only a data file.
 <ModuleCard 
   number="M12"
   title="Game Feel"
-  hours={6}
+  hours="6"
   objective="Make hits, pickups and round changes feel satisfying with effects, sound, camera and light."
 >
 
@@ -490,7 +490,7 @@ Record a hit before and after, and name every change that improved it.
   phase="Phase 4: Ship It"
   modules="13-14"
   description="Find and fix what makes the game slow, defend against cheating, and publish to real players."
-  hours={14}
+  hours="14"
 />
 
 ### Module 13: Performance, Multiplayer and Security
@@ -498,7 +498,7 @@ Record a hit before and after, and name every change that improved it.
 <ModuleCard 
   number="M13"
   title="Performance, Multiplayer and Security"
-  hours={8}
+  hours="8"
   objective="Find and fix what makes the game slow, understand how multiplayer behaves under latency, and defend against common cheating."
 >
 
@@ -530,7 +530,7 @@ Find and fix one performance problem and one exploit in your own game.
 <ModuleCard 
   number="M14"
   title="Monetization, Analytics and Publishing"
-  hours={6}
+  hours="6"
   objective="Add fair monetization, read what players actually do, and publish the game to real players safely."
 >
 
