@@ -14,6 +14,9 @@ import {
   CodeCompare,
   CourseBadge
 } from "./CourseComponents";
+import StudioWindowDiagram from "./StudioWindowDiagram";
+import ExplorerTreeDiagram from "./ExplorerTreeDiagram";
+import { CourseTeaser, LiveSignalDemo, MiniArena } from "./CourseTeaser";
 
 // Custom MDX components that can be used in blog posts.
 //
@@ -148,4 +151,13 @@ export const MDXComponents = {
   TechItem,
   CodeCompare,
   CourseBadge,
+
+  // Lesson diagrams (interactive, theme-aware)
+  StudioWindowDiagram,
+  ExplorerTreeDiagram,
+
+  // Course landing teaser + live demos
+  CourseTeaser,
+  LiveSignalDemo,
+  MiniArena,
 };

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import remarkGfm from "remark-gfm";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { getBlogBySlug, getBlogs } from "../../../../firebase/firestore";
@@ -190,6 +191,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   <MDXRemote
                     source={contentString}
                     components={MDXComponents}
+                    options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
                   />
                 </PostProvider>
               ) : (
