@@ -1,5 +1,22 @@
 import React from "react";
 import { EmailForm } from "./EmailForm";
+import { 
+  CourseProgress, 
+  ModuleCard, 
+  VocabTable,
+  VocabRow,
+  Principle, 
+  PhaseCard,
+  CheckYourself,
+  Outcome,
+  TechStack,
+  TechItem,
+  CodeCompare,
+  CourseBadge
+} from "./CourseComponents";
+import StudioWindowDiagram from "./StudioWindowDiagram";
+import ExplorerTreeDiagram from "./ExplorerTreeDiagram";
+import { CourseTeaser, LiveSignalDemo, MiniArena } from "./CourseTeaser";
 
 // Custom MDX components that can be used in blog posts.
 //
@@ -120,4 +137,27 @@ export const MDXComponents = {
       </div>
     );
   },
+
+  // Course-specific components
+  CourseProgress,
+  ModuleCard,
+  VocabTable,
+  VocabRow,
+  Principle,
+  PhaseCard,
+  CheckYourself,
+  Outcome,
+  TechStack,
+  TechItem,
+  CodeCompare,
+  CourseBadge,
+
+  // Lesson diagrams (interactive, theme-aware)
+  StudioWindowDiagram,
+  ExplorerTreeDiagram,
+
+  // Course landing teaser + live demos
+  CourseTeaser,
+  LiveSignalDemo,
+  MiniArena,
 };

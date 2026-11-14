@@ -117,3 +117,30 @@ export async function appendChatMessages(phone, userMsg, botMsg) {
     console.error("Error saving chat history:", error);
   }
 }
+
+// --- SUBSCRIBERS ---
+export async function getSubscribers(campaign = null) {
+  try {
+    const subscribersCol = collection(db, "subscribers");
+    let q = query(subscribersCol, orderBy("subscribedAt", "desc"));
+    if (campaign) {
+      q = query(subscribersCol, where("campaign", "==", campaign), orderBy("subscribedAt", "desc"));
+    }
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error("Error fetching subscribers:", error);
+    return [];
+  }
+}
+
+export async function confirmSubscriber(subscriberId) {
+  try {
+    const ref = doc(db, "subscribers", subscriberId);
+    await updateDoc(ref, { confirmed: true });
+    return true;
+  } catch (error) {
+    console.error("Error confirming subscriber:", error);
+    return false;
+  }
+}
