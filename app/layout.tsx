@@ -5,8 +5,8 @@ import "@fontsource-variable/jetbrains-mono";
 import "@fontsource/instrument-serif/400.css";
 import "@fontsource/instrument-serif/400-italic.css";
 import "./globals.css";
+import { SITE_URL } from "../lib/site";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 // Search-engine ownership-verification codes. Drop the real values into your .env (see .env.example)
 // and each tag below appears automatically — nothing else to wire up. Any left unset are simply omitted.
@@ -15,7 +15,7 @@ const BING_SITE_VERIFICATION = process.env.BING_SITE_VERIFICATION;
 const YANDEX_SITE_VERIFICATION = process.env.YANDEX_SITE_VERIFICATION;
 const PINTEREST_SITE_VERIFICATION = process.env.PINTEREST_SITE_VERIFICATION;
 const NAME = "Ado Daniel Nji";
-const TITLE = "Ado Daniel Nj | Full-Stack Developer";
+const TITLE = "Ado Daniel Nji | Full-Stack Developer";
 const DESCRIPTION =
   "Ado Daniel Nji is a solo full-stack developer in Douala, Cameroon, building high-performance web apps, mobile apps and AI agent systems. Beta Gamer, JobHub Cameroon and Axir.";
 

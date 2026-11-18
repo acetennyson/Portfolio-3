@@ -3,8 +3,8 @@ import { tools } from "../lib/tools";
 import { getBlogs, getProjects } from "../firebase/firestore";
 import { resolveProjects } from "../lib/projects";
 import { blogView } from "../lib/blog";
+import { SITE_URL } from "../lib/site";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [liveProjects, liveBlogs] = await Promise.all([
@@ -32,10 +32,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const blogPages: MetadataRoute.Sitemap = blogs.map((b) => {
-    const parsed = b.date && b.date !== "Just now" ? new Date(b.date) : null;
+    const when = b.updatedIso ?? b.iso;
     return {
       url: `${SITE_URL}/blog/${b.slug}`,
-      lastModified: parsed && !isNaN(parsed.getTime()) ? parsed : undefined,
+      lastModified: when ? new Date(when) : undefined,
       changeFrequency: "monthly",
       priority: 0.8,
     };

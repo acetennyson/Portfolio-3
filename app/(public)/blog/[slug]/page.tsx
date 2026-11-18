@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 import remarkGfm from "remark-gfm";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import { getBlogBySlug, getBlogs } from "../../../../firebase/firestore";
-import { blogView, formatDate, readingTime } from "../../../../lib/blog";
+import type { Metadata } from "next";
+import { getPost, getAllPosts } from "../../../../lib/blog-server";
+import { blogView, describe, plainText, readingTime } from "../../../../lib/blog";
+import { AUTHOR_NAME, SITE_NAME, SITE_URL, TWITTER_HANDLE, absoluteUrl, jsonLdString, toAbsolute } from "../../../../lib/site";
 import SplitReveal from "../../../../components/motion/SplitReveal";
 import Reveal from "../../../../components/motion/Reveal";
 import CoverParallax from "../../../../components/work/CoverParallax";
@@ -54,43 +56,52 @@ function isMdx(content: string): boolean {
   return content.includes('<') || /^#{1,6}\s/.test(content);
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const blog: any = await getBlogBySlug(slug).catch(() => null);
-  if (!blog) return { title: "Post" };
+  const blog: any = await getPost(slug);
+  if (!blog) return { title: "Post not found", robots: { index: false, follow: false } };
 
-  const url = `/blog/${slug}`;
-  const description = blog.excerpt || `${blog.title} — an article by Ado Daniel Nji.`;
+  const view = blogView(blog);
+  const path = `/blog/${slug}`;
+  const description = describe(view.excerpt, blog.content, `${view.title} — an article by ${AUTHOR_NAME}.`);
 
+  // No `images` here on purpose: the sibling opengraph-image.tsx / twitter-image.tsx files generate a
+  // correctly-sized card per post, and Next wires them into og:image / twitter:image automatically.
   return {
-    title: blog.title,
+    title: view.title,
     description,
-    keywords: Array.isArray(blog.tags) ? blog.tags : undefined,
-    alternates: { canonical: url },
+    keywords: view.tags.length ? view.tags : undefined,
+    authors: [{ name: AUTHOR_NAME, url: SITE_URL }],
+    alternates: { canonical: path },
     openGraph: {
       type: "article",
-      url,
-      title: blog.title,
+      url: path,
+      siteName: SITE_NAME,
+      locale: "en_US",
+      title: view.title,
       description,
-      images: blog.coverImage ? [{ url: blog.coverImage, width: 1200, height: 630, alt: blog.title }] : undefined,
-      publishedTime: blog.createdAt?.toDate?.()?.toISOString?.() || undefined,
-      tags: Array.isArray(blog.tags) ? blog.tags : undefined,
+      publishedTime: view.iso,
+      modifiedTime: view.updatedIso ?? view.iso,
+      authors: [AUTHOR_NAME],
+      section: view.tags[0],
+      tags: view.tags.length ? view.tags : undefined,
     },
     twitter: {
       card: "summary_large_image",
-      title: blog.title,
+      site: TWITTER_HANDLE,
+      creator: TWITTER_HANDLE,
+      title: view.title,
       description,
-      images: blog.coverImage ? [blog.coverImage] : undefined,
     },
   };
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const blog: any = await getBlogBySlug(slug).catch(() => null);
+  const blog: any = await getPost(slug);
   if (!blog) return notFound();
 
-  const allBlogs: any[] = await getBlogs().catch(() => []);
+  const allBlogs: any[] = await getAllPosts();
   const idx = allBlogs.findIndex((b: any) => b.slug === slug);
   const next = allBlogs.length > 1 ? allBlogs[(idx + 1) % allBlogs.length] : null;
   const num = String((idx < 0 ? 0 : idx) + 1).padStart(2, "0");
@@ -118,33 +129,39 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     ["Reading time", time],
   ];
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const postUrl = absoluteUrl(`/blog/${view.slug}`);
+  const description = describe(view.excerpt, contentString, `${view.title} — an article by ${AUTHOR_NAME}.`);
+  const words = plainText(contentString ?? "").split(/\s+/).filter(Boolean).length;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    headline: view.title,
-    description: view.excerpt || undefined,
-    image: view.cover,
-    url: `${SITE_URL}/blog/${view.slug}`,
-    datePublished: view.date !== "Just now" ? view.date : undefined,
-    author: { "@type": "Person", name: "Ado Daniel Nji", url: SITE_URL },
-    publisher: { "@type": "Person", name: "Ado Daniel Nji" },
-    keywords: view.tags.join(", "),
+    mainEntityOfPage: { "@type": "WebPage", "@id": postUrl },
+    headline: view.title.slice(0, 110),
+    description,
+    image: view.cover ? [toAbsolute(view.cover)] : undefined,
+    url: postUrl,
+    datePublished: view.iso,
+    dateModified: view.updatedIso ?? view.iso,
+    inLanguage: "en",
+    wordCount: words || undefined,
+    author: { "@type": "Person", name: AUTHOR_NAME, url: SITE_URL },
+    publisher: { "@type": "Person", name: AUTHOR_NAME, url: SITE_URL },
+    keywords: view.tags.length ? view.tags.join(", ") : undefined,
   };
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-      { "@type": "ListItem", position: 2, name: "Writing", item: `${SITE_URL}/blog` },
-      { "@type": "ListItem", position: 3, name: view.title, item: `${SITE_URL}/blog/${view.slug}` },
+      { "@type": "ListItem", position: 2, name: "Writing", item: absoluteUrl("/blog") },
+      { "@type": "ListItem", position: 3, name: view.title, item: postUrl },
     ],
   };
 
   return (
     <article className="cs">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumbLd) }} />
       <header className="cs-head">
         <Reveal immediate delay={100} className="n-page-top label">
           <Link href="/blog" className="cs-back"><ArrowLeft size={14} /> All writing</Link>

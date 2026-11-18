@@ -10,6 +10,7 @@ import Reveal from "../../../../components/motion/Reveal";
 import Magnetic from "../../../../components/motion/Magnetic";
 import CoverParallax from "../../../../components/work/CoverParallax";
 import BlockRenderer from "../../../../components/renderers/BlockRenderer";
+import { SITE_URL } from "../../../../lib/site";
 
 export const revalidate = 60;
 
@@ -67,7 +68,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     ["Status", project.status],
   ];
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
