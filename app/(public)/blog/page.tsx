@@ -1,19 +1,35 @@
-import { getBlogs } from "../../../firebase/firestore";
+import type { Metadata } from "next";
+import { getAllPosts } from "../../../lib/blog-server";
+import { SITE_NAME, TWITTER_HANDLE } from "../../../lib/site";
 import SplitReveal from "../../../components/motion/SplitReveal";
 import Reveal from "../../../components/motion/Reveal";
 import BlogIndex from "../../../components/blog/BlogIndex";
 import { blogView } from "../../../lib/blog";
 
 export const revalidate = 60;
-export const metadata = {
+export const metadata: Metadata = {
   title: "Writing",
   description: "Articles, tutorials and notes on full-stack development, design and AI by Ado Daniel Nji.",
-  alternates: { canonical: "/blog" },
-  openGraph: { type: "website", url: "/blog", title: "Writing — Ado Daniel Nji", description: "Articles, tutorials and notes on design, development and everything in between." },
+  alternates: { canonical: "/blog", types: { "application/rss+xml": [{ url: "/blog/feed.xml", title: "Writing — Ado Daniel Nji" }] } },
+  openGraph: {
+    type: "website",
+    url: "/blog",
+    siteName: SITE_NAME,
+    locale: "en_US",
+    title: "Writing — Ado Daniel Nji",
+    description: "Articles, tutorials and notes on design, development and everything in between.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: TWITTER_HANDLE,
+    creator: TWITTER_HANDLE,
+    title: "Writing — Ado Daniel Nji",
+    description: "Articles, tutorials and notes on design, development and everything in between.",
+  },
 };
 
 export default async function BlogPage() {
-  const raw = await getBlogs().catch(() => []);
+  const raw = await getAllPosts();
   const items = raw.map(blogView);
 
   return (
