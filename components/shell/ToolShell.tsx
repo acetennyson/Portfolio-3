@@ -1,34 +1,70 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import SplitReveal from "../motion/SplitReveal";
-import Reveal from "../motion/Reveal";
 import { tools, type Tool } from "../../lib/tools";
 
 /**
- * Shared header + stage for every page under /tools. Wraps a tool's existing,
- * untouched logic in the same editorial shell used across the rest of the site.
+ * Shared frame for every page under /tools. The page is exactly one viewport tall
+ * and never scrolls; each tool decides how its stage uses the space.
+ *
+ *  layout="split"  desktop: stage on the left, notes rail on the right (title, description, `aside`).
+ *  layout="bare"   desktop: stage under a slim title bar that carries the description.
+ *
+ *  Below 1024px both layouts show the tool only: a one-line bar (back, title, index) and the stage.
  */
-export default function ToolShell({ tool, children }: { tool: Tool; children: React.ReactNode }) {
+export default function ToolShell({
+  tool,
+  layout = "split",
+  aside,
+  children,
+}: {
+  tool: Tool;
+  layout?: "split" | "bare";
+  /** Tool-specific notes shown in the rail on desktop (shortcuts, history, support info). */
+  aside?: React.ReactNode;
+  children: React.ReactNode;
+}) {
   const idx = tools.findIndex((t) => t.slug === tool.slug);
   const num = String((idx < 0 ? 0 : idx) + 1).padStart(2, "0");
   const Icon = tool.icon;
+  const count = (
+    <span className="tool-bar-count label">
+      {num} / {String(tools.length).padStart(2, "0")}
+    </span>
+  );
 
   return (
-    <article className="tool-page">
-      <header className="tool-head">
-        <Reveal immediate delay={100} className="n-page-top label">
-          <Link href="/tools" className="cs-back"><ArrowLeft size={14} /> The Lab</Link>
-          <span>{num} / {String(tools.length).padStart(2, "0")}</span>
-        </Reveal>
-        <div className="tool-head-main">
-          <Icon className="tool-icon" size={32} strokeWidth={1.4} aria-hidden />
-          <SplitReveal as="h1" className="tool-title" immediate delay={200} stagger={90} text={tool.name} />
+    <article className="tool-page" data-layout={layout}>
+      <div className="tool-body">
+        <div className="tool-main">
+          <div className="tool-bar">
+            <Link href="/tools" className="cs-back label">
+              <ArrowLeft size={14} /> The Lab
+            </Link>
+            <h1 className="tool-bar-title">
+              <Icon size={16} strokeWidth={1.6} aria-hidden />
+              <span>{tool.name}</span>
+            </h1>
+            <p className="tool-bar-desc">{tool.desc}</p>
+            {count}
+          </div>
+          <section className="tool-stage" aria-label={tool.name}>
+            {children}
+          </section>
         </div>
-        <Reveal immediate delay={450}>
-          <p className="tool-desc">{tool.desc}</p>
-        </Reveal>
-      </header>
-      <div className="tool-stage">{children}</div>
+
+        {layout === "split" && (
+          <aside className="tool-rail">
+            <div className="tool-rail-top">
+              <span className="label">{num} / {String(tools.length).padStart(2, "0")}</span>
+              <Icon className="tool-rail-icon" size={26} strokeWidth={1.4} aria-hidden />
+            </div>
+            <SplitReveal as="p" className="tool-rail-title" immediate delay={200} stagger={90} text={tool.name} />
+            <p className="tool-desc">{tool.desc}</p>
+            {aside}
+          </aside>
+        )}
+      </div>
     </article>
   );
 }

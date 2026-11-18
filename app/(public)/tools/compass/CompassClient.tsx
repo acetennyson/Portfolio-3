@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Check, Copy, Info, Navigation, Smartphone } from "lucide-react";
 import ToolShell from "../../../../components/shell/ToolShell";
 import { getTool } from "../../../../lib/tools";
 
@@ -8,167 +9,209 @@ function getCardinal(deg: number) {
   return dirs[Math.round(deg / 22.5) % 16];
 }
 
+/** checking → live | unavailable;  prompt (iOS asks permission on a tap) → live | denied */
+type Status = "checking" | "prompt" | "live" | "unavailable" | "denied";
+
+type IOSOrientationEvent = DeviceOrientationEvent & { webkitCompassHeading?: number };
+type IOSOrientationCtor = typeof DeviceOrientationEvent & { requestPermission?: () => Promise<"granted" | "denied"> };
+
+const pt = (r: number, deg: number) => {
+  const a = ((deg - 90) * Math.PI) / 180;
+  return { x: +(r * Math.cos(a)).toFixed(2), y: +(r * Math.sin(a)).toFixed(2) };
+};
+
+function Dial({ deg }: { deg: number }) {
+  return (
+    <svg viewBox="-150 -150 300 300" aria-hidden>
+      <circle r="146" fill="var(--bg-card)" stroke="var(--border)" strokeWidth="1" />
+      {/* fixed heading marker */}
+      <path d="M -7 -149 L 7 -149 L 0 -135 Z" fill="var(--accent)" />
+      <g transform={`rotate(${-deg})`}>
+        {Array.from({ length: 72 }).map((_, i) => {
+          const a = i * 5;
+          const major = a % 45 === 0;
+          const p1 = pt(major ? 118 : 126, a), p2 = pt(134, a);
+          return (
+            <line key={i} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+              stroke={a === 0 ? "var(--accent)" : major ? "var(--fg)" : "var(--fg-muted)"}
+              strokeOpacity={major ? 1 : 0.5} strokeWidth={a === 0 ? 3 : major ? 2 : 1} />
+          );
+        })}
+        {([["N", 0], ["E", 90], ["S", 180], ["W", 270]] as const).map(([d, a]) => {
+          const p = pt(100, a);
+          return (
+            <text key={d} x={p.x} y={p.y} textAnchor="middle" dominantBaseline="central"
+              style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: 20 }}
+              fill={d === "N" ? "var(--accent-ink)" : "var(--fg-muted)"}>{d}</text>
+          );
+        })}
+        {/* north needle */}
+        <polygon points="0,-82 -6,0 6,0" fill="var(--accent)" />
+        <polygon points="0,82 -6,0 6,0" fill="var(--fg-muted)" opacity="0.35" />
+      </g>
+      <circle r="5" fill="var(--bg-card)" stroke="var(--fg)" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
 function Compass() {
-  const [heading, setHeading] = useState<number | null>(null);
-  const [error, setError] = useState("");
-  const [supported, setSupported] = useState(true);
+  const [heading, setHeading] = useState(0);
+  const [status, setStatus] = useState<Status>("checking");
+  const [copied, setCopied] = useState(false);
+  const targetRef = useRef(0);
   const smoothRef = useRef(0);
   const rafRef = useRef(0);
-  const targetRef = useRef(0);
+  const liveRef = useRef(false);
+  const gotAbsRef = useRef(false);
+  const cleanupRef = useRef<() => void>(() => {});
 
-  useEffect(() => {
-    if (!("DeviceOrientationEvent" in window)) {
-      setSupported(false); return;
-    }
-
-    function onOrientation(e: DeviceOrientationEvent) {
+  const begin = useCallback(() => {
+    const onReading = (e: Event, absolute: boolean) => {
+      const ev = e as IOSOrientationEvent;
       let deg: number | null = null;
-      // iOS
-      if ((e as any).webkitCompassHeading != null) {
-        deg = (e as any).webkitCompassHeading;
-      } else if (e.alpha != null) {
-        deg = 360 - e.alpha;
-      }
-      if (deg != null) targetRef.current = deg;
-    }
+      if (ev.webkitCompassHeading != null) deg = ev.webkitCompassHeading; // iOS: already true heading
+      else if (ev.alpha != null) deg = 360 - ev.alpha;
+      if (deg == null || Number.isNaN(deg)) return;
+      if (absolute) gotAbsRef.current = true;
+      else if (gotAbsRef.current) return; // prefer the north-referenced stream once we've seen it
+      targetRef.current = deg;
+      if (!liveRef.current) { liveRef.current = true; setStatus("live"); }
+    };
+    const onAbs = (e: Event) => onReading(e, true);
+    const onRel = (e: Event) => onReading(e, false);
+    window.addEventListener("deviceorientationabsolute", onAbs);
+    window.addEventListener("deviceorientation", onRel);
 
-    // iOS 13+ requires permission
-    if (typeof (DeviceOrientationEvent as any).requestPermission === "function") {
-      (DeviceOrientationEvent as any).requestPermission()
-        .then((state: string) => {
-          if (state === "granted") window.addEventListener("deviceorientation", onOrientation);
-          else setError("Permission denied. Allow motion access in Settings.");
-        })
-        .catch(() => setError("Could not request motion permission."));
-    } else {
-      window.addEventListener("deviceorientation", onOrientation);
-    }
-
-    // smooth animation loop
-    function animate() {
-      rafRef.current = requestAnimationFrame(animate);
-      // shortest-path interpolation
+    const tick = () => {
+      rafRef.current = requestAnimationFrame(tick);
+      if (!liveRef.current) return;
       let diff = targetRef.current - smoothRef.current;
       if (diff > 180) diff -= 360;
       if (diff < -180) diff += 360;
-      smoothRef.current = (smoothRef.current + diff * 0.1 + 360) % 360;
-      setHeading(Math.round(smoothRef.current));
-    }
-    animate();
+      smoothRef.current = (smoothRef.current + diff * 0.12 + 360) % 360;
+      setHeading(Math.round(smoothRef.current) % 360);
+    };
+    tick();
 
-    return () => {
-      window.removeEventListener("deviceorientation", onOrientation);
+    // Desktop browsers expose the API but never send a reading: call that "no sensor".
+    const timer = window.setTimeout(() => { if (!liveRef.current) setStatus("unavailable"); }, 1800);
+
+    cleanupRef.current = () => {
+      window.removeEventListener("deviceorientationabsolute", onAbs);
+      window.removeEventListener("deviceorientation", onRel);
       cancelAnimationFrame(rafRef.current);
+      window.clearTimeout(timer);
     };
   }, []);
 
-  const deg = heading ?? 0;
-  const cardinal = getCardinal(deg);
+  useEffect(() => {
+    if (!("DeviceOrientationEvent" in window)) { setStatus("unavailable"); return; }
+    const Ctor = DeviceOrientationEvent as IOSOrientationCtor;
+    if (typeof Ctor.requestPermission === "function") { setStatus("prompt"); } // needs a tap, can't ask on load
+    else begin();
+    return () => cleanupRef.current();
+  }, [begin]);
+
+  async function enable() {
+    const Ctor = DeviceOrientationEvent as IOSOrientationCtor;
+    try {
+      const res = await Ctor.requestPermission!();
+      if (res === "granted") { setStatus("checking"); begin(); }
+      else setStatus("denied");
+    } catch { setStatus("denied"); }
+  }
+
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch { /* clipboard blocked: the link is also visible in the address bar */ }
+  }
+
+  const live = status === "live";
+  const cardinal = getCardinal(heading);
+  const secure = typeof window === "undefined" ? true : window.isSecureContext;
+
+  const statusText: Record<Status, string> = {
+    checking: "Looking for a sensor…",
+    prompt: "Waiting for permission",
+    live: "Sensor connected",
+    unavailable: "No sensor detected",
+    denied: "Permission denied",
+  };
+
+  const aside = (
+    <>
+      <div className="rail-block">
+        <h2 className="label">Sensor</h2>
+        <ul className="rail-list">
+          <li>Status <b>{statusText[status]}</b></li>
+          <li>Reading <b>{live ? `${heading}° ${cardinal}` : "—"}</b></li>
+        </ul>
+      </div>
+      <div className="rail-block">
+        <h2 className="label">Works on</h2>
+        <p className="rail-empty">
+          Phones and tablets, plus a few laptops with a magnetometer. Most desktop browsers have no
+          heading sensor, so open this page on your phone. The dial drifts near magnets and metal;
+          sweep the phone in a figure eight to recalibrate.
+        </p>
+      </div>
+    </>
+  );
 
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center gap-8">
-      <div className="text-center">
-        <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "var(--accent)" }}>Tool</p>
-        <h1 className="text-4xl font-black tracking-tight grad-text">Compass</h1>
-      </div>
-
-      {!supported && (
-        <p className="text-sm text-red-400">Device orientation not supported on this device/browser.</p>
-      )}
-      {error && <p className="text-sm text-red-400">{error}</p>}
-
-      {/* compass ring */}
-      <div className="relative flex items-center justify-center" style={{ width: 280, height: 280 }}>
-        {/* outer glow ring */}
-        <div className="absolute inset-0 rounded-full grad-bg opacity-20 blur-2xl" />
-
-        {/* static ring with cardinal labels */}
-        <div className="absolute inset-0 rounded-full" style={{ border: "2px solid var(--border)" }}>
-          {["N","E","S","W"].map((dir, i) => {
-            const angle = i * 90;
-            const rad = (angle - 90) * Math.PI / 180;
-            const r = 118;
-            const x = 140 + r * Math.cos(rad);
-            const y = 140 + r * Math.sin(rad);
-            return (
-              <span key={dir} className="absolute text-xs font-black"
-                style={{
-                  left: x, top: y,
-                  transform: "translate(-50%,-50%)",
-                  color: dir === "N" ? "var(--accent)" : "var(--fg-muted)",
-                }}>
-                {dir}
-              </span>
-            );
-          })}
-          {/* tick marks */}
-          {Array.from({ length: 72 }).map((_, i) => {
-            const angle = i * 5;
-            const rad = (angle - 90) * Math.PI / 180;
-            const isMajor = angle % 45 === 0;
-            const r1 = isMajor ? 100 : 104, r2 = 108;
-            return (
-              <svg key={i} className="absolute inset-0 w-full h-full" viewBox="0 0 280 280" suppressHydrationWarning>
-                <line
-                  suppressHydrationWarning
-                  x1={140 + r1 * Math.cos(rad)} y1={140 + r1 * Math.sin(rad)}
-                  x2={140 + r2 * Math.cos(rad)} y2={140 + r2 * Math.sin(rad)}
-                  stroke={isMajor ? "var(--accent)" : "var(--border)"}
-                  strokeWidth={isMajor ? 2 : 1}
-                />
-              </svg>
-            );
-          })}
+    <ToolShell tool={getTool("compass")!} aside={aside}>
+      <div className="compass" data-live={live}>
+        <div className="compass-dial" role="img" aria-label={live ? `Heading ${heading} degrees, ${cardinal}` : "Compass, no reading"}>
+          <Dial deg={live ? heading : 0} />
         </div>
 
-        {/* rotating needle */}
-        <div className="absolute inset-0 flex items-center justify-center"
-          style={{ transform: `rotate(${deg}deg)`, transition: "transform 0.05s linear" }}>
-          <svg width="280" height="280" viewBox="0 0 280 280">
-            {/* north — red */}
-            <polygon points="140,50 133,140 147,140" fill="url(#needleRed)" />
-            {/* south — muted */}
-            <polygon points="140,230 133,140 147,140" fill="var(--fg-muted)" opacity="0.5" />
-            <defs>
-              <linearGradient id="needleRed" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="var(--grad-start)" />
-                <stop offset="100%" stopColor="var(--grad-end)" />
-              </linearGradient>
-            </defs>
-          </svg>
-        </div>
-
-        {/* center dot */}
-        <div className="absolute w-4 h-4 rounded-full grad-bg z-10"
-          style={{ boxShadow: "0 0 12px rgba(139,92,246,0.8)" }} />
-
-        {/* center readout */}
-        <div className="absolute" style={{ bottom: -60 }}>
-          <div className="text-center">
-            <span className="text-5xl font-black grad-text">{deg}°</span>
-            <span className="ml-2 text-2xl font-black" style={{ color: "var(--fg-muted)" }}>{cardinal}</span>
+        {live && (
+          <div className="compass-read" aria-hidden>
+            <strong>{heading}°</strong>
+            <span>{cardinal}</span>
           </div>
-        </div>
-      </div>
+        )}
 
-      <div className="mt-16 text-xs text-center" style={{ color: "var(--fg-muted)" }}>
-        {heading === null
-          ? "Waiting for orientation data — requires a device with a gyroscope/compass"
-          : `Pointing ${cardinal} · ${deg}°`}
+        {(status === "unavailable" || status === "denied" || status === "prompt") && (
+          <div className="wb-state" style={{ position: "absolute", inset: 0, justifyContent: "center" }} role="status">
+            {status === "prompt" ? (
+              <>
+                <Navigation size={32} strokeWidth={1.3} aria-hidden />
+                <h2>Allow motion access</h2>
+                <p>iOS asks before a page can read the compass.</p>
+                <button className="wb-btn" onClick={enable}>Enable compass</button>
+              </>
+            ) : status === "denied" ? (
+              <>
+                <Info size={32} strokeWidth={1.3} aria-hidden />
+                <h2>Motion access is off</h2>
+                <p>Allow Motion &amp; Orientation access for this site in your browser settings, then reload the page.</p>
+              </>
+            ) : (
+              <>
+                <Smartphone size={32} strokeWidth={1.3} aria-hidden />
+                <h2>This device has no compass</h2>
+                <p>
+                  {secure
+                    ? "Open this page on a phone or tablet to get a live heading."
+                    : "Sensors only work on secure (https) pages. Load this page over https on a phone or tablet."}
+                </p>
+                <button className="wb-btn wb-btn-line" onClick={copyLink}>
+                  {copied ? <Check size={16} aria-hidden /> : <Copy size={16} aria-hidden />}
+                  {copied ? "Link copied" : "Copy page link"}
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </div>
-
-      <p className="text-xs text-center max-w-xs" style={{ color: "var(--fg-muted)" }}>
-        Works on mobile and laptops with gyroscopes (e.g. Surface, some MacBooks on Safari).
-        Most desktop browsers block orientation access even if hardware is present.
-      </p>
-    </div>
+    </ToolShell>
   );
 }
 
 export default function CompassClient() {
-  return (
-    <ToolShell tool={getTool("compass")!}>
-      <Compass />
-    </ToolShell>
-  );
+  return <Compass />;
 }
