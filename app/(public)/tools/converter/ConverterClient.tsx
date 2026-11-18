@@ -1,5 +1,6 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
+import { ArrowUpDown, Check, Copy, X } from "lucide-react";
 import ToolShell from "../../../../components/shell/ToolShell";
 import { getTool } from "../../../../lib/tools";
 
@@ -163,6 +164,9 @@ function UniversalConverter() {
   const [input, setInput] = useState("1");
   const [rates, setRates] = useState<Record<string, number>>({});
   const [ratesLoading, setRatesLoading] = useState(false);
+  const [ratesFailed, setRatesFailed] = useState(false);
+  const [sheet, setSheet] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const cat = CATEGORIES[catIdx];
   const isCurrency = cat.name === "Currency";
@@ -170,11 +174,11 @@ function UniversalConverter() {
   // load currency rates once
   useEffect(() => {
     if (!isCurrency || Object.keys(rates).length) return;
-    setRatesLoading(true);
+    setRatesLoading(true); setRatesFailed(false);
     fetch("https://open.er-api.com/v6/latest/USD")
       .then(r => r.json())
-      .then(d => { if (d.rates) setRates(d.rates); })
-      .catch(() => {})
+      .then(d => { if (d.rates) setRates(d.rates); else setRatesFailed(true); })
+      .catch(() => setRatesFailed(true))
       .finally(() => setRatesLoading(false));
   }, [isCurrency, rates]);
 
@@ -191,105 +195,124 @@ function UniversalConverter() {
   const result = fromUnit && toUnit ? fmt(convert(parseFloat(input) || 0, fromUnit, toUnit)) : "—";
 
   function switchCat(i: number) {
-    setCatIdx(i); setFromIdx(0); setToIdx(1); setInput("1");
+    setCatIdx(i); setFromIdx(0); setToIdx(1); setInput("1"); setSheet(false);
   }
 
   function swap() {
     setFromIdx(toIdx); setToIdx(fromIdx);
   }
 
-  return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <div className="text-center">
-        <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "var(--accent)" }}>Tool</p>
-        <h1 className="text-4xl font-black tracking-tight grad-text">Universal Converter</h1>
-      </div>
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(result);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1400);
+    } catch { /* clipboard blocked */ }
+  }
 
-      {/* category tabs */}
-      <div className="flex flex-wrap gap-2">
+  const unitList = (
+    <div className="cv-units-list">
+      {units.map((u, i) => (
+        <div key={i} className="cv-unit" data-on={i === fromIdx}>
+          <span>{u.label}</span>
+          <b>{fmt(convert(parseFloat(input) || 0, fromUnit, u))}</b>
+        </div>
+      ))}
+    </div>
+  );
+  const showUnits = units.length > 0 && !isCurrency && !!fromUnit;
+
+  return (
+    <div className="cv">
+      <div className="cv-cats" role="group" aria-label="Category">
         {CATEGORIES.map((c, i) => (
-          <button key={c.name} onClick={() => switchCat(i)}
-            className="rounded-full px-3 py-1.5 text-xs font-bold transition-all"
-            style={catIdx === i
-              ? { background: "linear-gradient(135deg,var(--grad-start),var(--grad-end))", color: "#fff" }
-              : { background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--fg-muted)" }}>
-            {c.emoji} {c.name}
+          <button key={c.name} className="cv-cat" aria-pressed={catIdx === i} onClick={() => switchCat(i)}>
+            {c.name}
           </button>
         ))}
       </div>
 
-      {/* converter card */}
-      <div className="card p-6 space-y-5">
-        {isCurrency && ratesLoading && (
-          <p className="text-xs text-center animate-pulse" style={{ color: "var(--fg-muted)" }}>Loading exchange rates…</p>
-        )}
+      <div className="cv-main">
+        <div className="wb-panel cv-box">
+          {isCurrency && ratesLoading && (
+            <p className="cv-formula" role="status">Loading exchange rates…</p>
+          )}
+          {isCurrency && ratesFailed && (
+            <p className="cv-formula" role="alert" style={{ color: "#f87171" }}>
+              Couldn’t load exchange rates. Check your connection and pick Currency again.
+            </p>
+          )}
 
-        {/* from */}
-        <div className="space-y-2">
-          <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--fg-muted)" }}>From</label>
-          <div className="flex gap-2">
-            <input
-              type="number"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              className="flex-1 rounded-xl px-4 py-3 text-lg font-bold outline-none"
-              style={{ background: "var(--bg-card-hover)", border: "1px solid var(--border)", color: "var(--fg)" }}
-            />
-            <select value={fromIdx} onChange={e => setFromIdx(Number(e.target.value))}
-              className="rounded-xl px-3 py-3 text-sm font-semibold outline-none flex-1"
-              style={{ background: "var(--bg-card-hover)", border: "1px solid var(--border)", color: "var(--fg)" }}>
-              {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
-            </select>
-          </div>
-        </div>
-
-        {/* swap button */}
-        <div className="flex justify-center">
-          <button onClick={swap}
-            className="rounded-full w-10 h-10 flex items-center justify-center text-lg transition-all hover:scale-110 grad-bg text-white font-bold">
-            ⇅
-          </button>
-        </div>
-
-        {/* to */}
-        <div className="space-y-2">
-          <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--fg-muted)" }}>To</label>
-          <div className="flex gap-2">
-            <div className="flex-1 rounded-xl px-4 py-3 text-lg font-black select-all"
-              style={{ background: "var(--bg-card-hover)", border: "1px solid var(--border)", color: "var(--accent)" }}>
-              {result}
+          <div className="wb-field">
+            <span>From</span>
+            <div className="cv-row">
+              <input
+                className="wb-input cv-num"
+                type="number"
+                inputMode="decimal"
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                aria-label="Amount to convert"
+              />
+              <select className="wb-input" value={fromIdx} onChange={e => setFromIdx(Number(e.target.value))} aria-label="From unit">
+                {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
+              </select>
             </div>
-            <select value={toIdx} onChange={e => setToIdx(Number(e.target.value))}
-              className="rounded-xl px-3 py-3 text-sm font-semibold outline-none flex-1"
-              style={{ background: "var(--bg-card-hover)", border: "1px solid var(--border)", color: "var(--fg)" }}>
-              {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
-            </select>
           </div>
+
+          <button className="cv-swap" onClick={swap} aria-label="Swap units"><ArrowUpDown size={18} /></button>
+
+          <div className="wb-field">
+            <span>To</span>
+            <div className="cv-row">
+              <button className="cv-res" onClick={copy} title="Copy result" aria-label={`Result ${result}. Copy`}>
+                <strong>{result}</strong>
+                {copied ? <Check size={16} aria-hidden /> : <Copy size={16} aria-hidden />}
+              </button>
+              <select className="wb-input" value={toIdx} onChange={e => setToIdx(Number(e.target.value))} aria-label="To unit">
+                {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {fromUnit && toUnit && (
+            <p className="cv-formula">1 {fromUnit.label} = {fmt(convert(1, fromUnit, toUnit))} {toUnit.label}</p>
+          )}
         </div>
 
-        {/* formula hint */}
-        {fromUnit && toUnit && (
-          <p className="text-xs text-center" style={{ color: "var(--fg-muted)" }}>
-            1 {fromUnit.label} = {fmt(convert(1, fromUnit, toUnit))} {toUnit.label}
-          </p>
+        {showUnits && (
+          <button className="wb-btn wb-btn-line cv-units-btn" onClick={() => setSheet(true)}>
+            All {cat.name.toLowerCase()} units
+          </button>
         )}
       </div>
 
-      {/* quick reference — all units */}
-      {units.length > 0 && !isCurrency && (
-        <div className="card p-5">
-          <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "var(--fg-muted)" }}>All {cat.name} Units</p>
-          <div className="grid grid-cols-2 gap-2">
-            {units.map((u, i) => {
-              const val = fmt(convert(parseFloat(input) || 0, fromUnit, u));
-              return (
-                <div key={i} className="flex items-center justify-between rounded-xl px-3 py-2"
-                  style={{ background: i === fromIdx ? "rgba(139,92,246,0.1)" : "var(--bg-card-hover)", border: "1px solid var(--border)" }}>
-                  <span className="text-xs" style={{ color: "var(--fg-muted)" }}>{u.label}</span>
-                  <span className="text-sm font-bold" style={{ color: i === fromIdx ? "var(--accent)" : "var(--fg)" }}>{val}</span>
-                </div>
-              );
-            })}
+      {/* desktop: every unit at a glance */}
+      <div className="wb-panel cv-units">
+        {showUnits ? (
+          <>
+            <div className="cv-units-head">
+              <span className="label">All {cat.name} units</span>
+              <span className="label">{input || 0} {fromUnit.label.split(" (")[0]}</span>
+            </div>
+            <div className="wb-scroll">{unitList}</div>
+          </>
+        ) : (
+          <div className="wb-state">
+            <p>{isCurrency ? "Rates come from open.er-api.com and update daily." : "Pick a category to see every unit."}</p>
+          </div>
+        )}
+      </div>
+
+      {/* mobile: the same list as a sheet */}
+      {sheet && showUnits && (
+        <div className="cv-sheet" onClick={() => setSheet(false)}>
+          <div className="cv-sheet-in" role="dialog" aria-label={`All ${cat.name} units`} onClick={e => e.stopPropagation()}>
+            <div className="cv-units-head">
+              <span className="label">All {cat.name} units</span>
+              <button className="wc-x" style={{ opacity: 1, position: "static" }} onClick={() => setSheet(false)} aria-label="Close"><X size={14} /></button>
+            </div>
+            <div className="wb-scroll">{unitList}</div>
           </div>
         </div>
       )}
@@ -299,7 +322,7 @@ function UniversalConverter() {
 
 export default function ConverterClient() {
   return (
-    <ToolShell tool={getTool("converter")!}>
+    <ToolShell tool={getTool("converter")!} layout="bare">
       <UniversalConverter />
     </ToolShell>
   );

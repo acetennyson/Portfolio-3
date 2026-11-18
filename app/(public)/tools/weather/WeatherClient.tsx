@@ -1,6 +1,10 @@
 "use client";
 import { useState } from "react";
-import { Search, MapPin, Wind, Droplets, Eye, Thermometer, Navigation } from "lucide-react";
+import {
+  Search, MapPin, Wind, Droplets, Eye, Navigation,
+  Sun, Moon, Cloud, CloudSun, CloudMoon, CloudRain, CloudDrizzle, CloudSnow, CloudFog, CloudLightning,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import ToolShell from "../../../../components/shell/ToolShell";
 import { getTool } from "../../../../lib/tools";
 
@@ -26,18 +30,17 @@ type WeatherData = {
   }[];
 };
 
-// WMO weather codes → label + emoji
-function describeWeather(code: number, isDay = true): { label: string; emoji: string } {
-  if (code === 0) return { label: "Clear Sky", emoji: isDay ? "☀️" : "🌙" };
-  if (code <= 2) return { label: "Partly Cloudy", emoji: "⛅" };
-  if (code === 3) return { label: "Overcast", emoji: "☁️" };
-  if (code <= 49) return { label: "Foggy", emoji: "🌫️" };
-  if (code <= 59) return { label: "Drizzle", emoji: "🌦️" };
-  if (code <= 69) return { label: "Rain", emoji: "🌧️" };
-  if (code <= 79) return { label: "Snow", emoji: "❄️" };
-  if (code <= 84) return { label: "Rain Showers", emoji: "🌧️" };
-  if (code <= 94) return { label: "Thunderstorm", emoji: "⛈️" };
-  return { label: "Thunderstorm", emoji: "⛈️" };
+// WMO weather codes → label + icon
+function describeWeather(code: number, isDay = true): { label: string; Icon: LucideIcon } {
+  if (code === 0) return { label: "Clear sky", Icon: isDay ? Sun : Moon };
+  if (code <= 2) return { label: "Partly cloudy", Icon: isDay ? CloudSun : CloudMoon };
+  if (code === 3) return { label: "Overcast", Icon: Cloud };
+  if (code <= 49) return { label: "Foggy", Icon: CloudFog };
+  if (code <= 59) return { label: "Drizzle", Icon: CloudDrizzle };
+  if (code <= 69) return { label: "Rain", Icon: CloudRain };
+  if (code <= 79) return { label: "Snow", Icon: CloudSnow };
+  if (code <= 84) return { label: "Rain showers", Icon: CloudRain };
+  return { label: "Thunderstorm", Icon: CloudLightning };
 }
 
 function formatDay(dateStr: string, i: number) {
@@ -100,6 +103,8 @@ async function fetchWeather(lat: number, lon: number, name: string): Promise<Wea
   };
 }
 
+const QUICK = ["London", "Lagos", "New York", "Tokyo", "Sydney"];
+
 function WeatherForecast() {
   const [query, setQuery] = useState("");
   const [weather, setWeather] = useState<WeatherData | null>(null);
@@ -122,6 +127,7 @@ function WeatherForecast() {
   }
 
   async function useMyLocation() {
+    if (!navigator.geolocation) { setError("This browser can’t share your location."); return; }
     setLoading(true); setError(""); setWeather(null);
     navigator.geolocation.getCurrentPosition(
       async ({ coords }) => {
@@ -135,112 +141,89 @@ function WeatherForecast() {
         } catch (e: any) { setError(e.message); }
         finally { setLoading(false); }
       },
-      () => { setError("Location access denied"); setLoading(false); }
+      () => { setError("Location access was denied. Search for a city instead."); setLoading(false); }
     );
   }
 
   const cur = weather?.current;
   const wx = cur ? describeWeather(cur.weatherCode, cur.isDay) : null;
+  const NowIcon = wx?.Icon;
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <div className="text-center">
-        <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "var(--accent)" }}>Tool</p>
-        <h1 className="text-4xl font-black tracking-tight grad-text">Weather Forecast</h1>
-        <p className="mt-2 text-sm" style={{ color: "var(--fg-muted)" }}>Search by city, ZIP code, IP address, or coordinates</p>
-      </div>
-
-      {/* search bar */}
-      <div className="flex gap-2">
-        <div className="relative flex-1">
-          <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: "var(--fg-muted)" }} />
+    <div className="wx">
+      <div className="wx-search">
+        <label>
+          <Search size={16} aria-hidden />
           <input
+            className="wb-input"
             value={query}
-            onChange={e => setQuery(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && search()}
-            placeholder="London · 10001 · 8.8.8.8 · 51.5,-0.1"
-            className="w-full rounded-2xl pl-10 pr-4 py-3 text-sm outline-none transition-all"
-            style={{ background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--fg)" }}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && search()}
+            placeholder="City, ZIP, IP or 51.5,-0.1"
+            aria-label="Search for a place"
+            enterKeyHint="search"
           />
-        </div>
-        <button onClick={() => search()}
-          className="btn-grad rounded-2xl px-5 py-3 text-sm font-bold transition-opacity hover:opacity-90">
-          Search
-        </button>
-        <button onClick={useMyLocation} title="Use my location"
-          className="rounded-2xl px-4 py-3 transition-all hover:border-[var(--accent)]"
-          style={{ background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--fg-muted)" }}>
-          <Navigation size={16} />
+        </label>
+        <button className="wb-btn" onClick={() => search()} disabled={loading}>Search</button>
+        <button className="wb-icon-btn" onClick={useMyLocation} title="Use my location" aria-label="Use my location">
+          <Navigation size={17} />
         </button>
       </div>
 
-      {/* error */}
-      {error && <p className="text-sm text-center text-red-400">{error}</p>}
+      {error && <p role="alert" style={{ margin: 0, fontSize: ".88rem", color: "#f87171" }}>{error}</p>}
 
-      {/* loading */}
       {loading && (
-        <div className="card p-10 flex items-center justify-center">
-          <div className="w-8 h-8 rounded-full border-2 border-[var(--accent)] border-t-transparent animate-spin" />
+        <div className="wb-state" role="status" aria-live="polite">
+          <div className="wb-spinner" />
+          <p>Fetching the forecast…</p>
         </div>
       )}
 
-      {/* weather */}
-      {weather && !loading && (
-        <div className="space-y-4">
-          {/* current */}
-          <div className="card p-6 relative overflow-hidden">
-            <div className="pointer-events-none absolute -top-10 -right-10 w-48 h-48 rounded-full blur-3xl opacity-15 grad-bg" />
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <MapPin size={13} style={{ color: "var(--fg-muted)" }} />
-                  <span className="text-sm font-semibold" style={{ color: "var(--fg-muted)" }}>{weather.location}</span>
-                </div>
-                <div className="text-8xl font-black grad-text leading-none">{cur!.temp}°</div>
-                <div className="text-lg font-semibold mt-1" style={{ color: "var(--fg)" }}>{wx!.label}</div>
-                <div className="text-sm mt-0.5" style={{ color: "var(--fg-muted)" }}>Feels like {cur!.feelsLike}°C</div>
-              </div>
-              <div className="text-7xl">{wx!.emoji}</div>
-            </div>
+      {!loading && !weather && !error && (
+        <div className="wb-state">
+          <CloudSun size={36} strokeWidth={1.3} aria-hidden />
+          <h2>Where to?</h2>
+          <p>Search a place above, or start with one of these.</p>
+          <div className="wx-chips">
+            {QUICK.map((c) => (
+              <button key={c} className="wx-chip" onClick={() => { setQuery(c); search(c); }}>{c}</button>
+            ))}
+          </div>
+        </div>
+      )}
 
-            {/* stats row */}
-            <div className="grid grid-cols-4 gap-3 mt-6 pt-5" style={{ borderTop: "1px solid var(--border)" }}>
-              {[
-                { icon: <Droplets size={14} />, label: "Humidity", val: `${cur!.humidity}%` },
-                { icon: <Wind size={14} />, label: "Wind", val: `${cur!.windSpeed} km/h` },
-                { icon: <Eye size={14} />, label: "Visibility", val: `${cur!.visibility} km` },
-                { icon: <Thermometer size={14} />, label: "Feels Like", val: `${cur!.feelsLike}°` },
-              ].map(({ icon, label, val }) => (
-                <div key={label} className="text-center">
-                  <div className="flex justify-center mb-1" style={{ color: "var(--accent)" }}>{icon}</div>
-                  <div className="text-xs" style={{ color: "var(--fg-muted)" }}>{label}</div>
-                  <div className="text-sm font-bold mt-0.5" style={{ color: "var(--fg)" }}>{val}</div>
-                </div>
-              ))}
+      {weather && !loading && cur && wx && NowIcon && (
+        <div className="wx-grid">
+          <div className="wb-panel wx-now">
+            <div className="wx-loc"><MapPin size={14} aria-hidden /> <span>{weather.location}</span></div>
+            <div className="wx-temp">
+              <strong>{cur.temp}°</strong>
+              <NowIcon strokeWidth={1.1} aria-hidden />
+            </div>
+            <div>
+              <div className="wx-cond">{wx.label}</div>
+              <div className="label" style={{ marginTop: ".35rem" }}>Feels like {cur.feelsLike}°C</div>
+            </div>
+            <div className="wx-stats">
+              <div><small><Droplets size={12} aria-hidden /> Humidity</small><b>{cur.humidity}%</b></div>
+              <div><small><Wind size={12} aria-hidden /> Wind</small><b>{cur.windSpeed} km/h</b></div>
+              <div><small><Eye size={12} aria-hidden /> Visibility</small><b>{cur.visibility} km</b></div>
             </div>
           </div>
 
-          {/* 7-day forecast */}
-          <div className="card p-4">
-            <p className="text-xs font-bold uppercase tracking-widest mb-4 px-2" style={{ color: "var(--fg-muted)" }}>7-Day Forecast</p>
-            <div className="space-y-1">
-              {weather.daily.map((day, i) => {
-                const { emoji } = describeWeather(day.weatherCode);
-                return (
-                  <div key={day.date} className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-[var(--bg-card-hover)]">
-                    <span className="text-xl w-8">{emoji}</span>
-                    <span className="text-sm font-semibold flex-1" style={{ color: "var(--fg)" }}>{formatDay(day.date, i)}</span>
-                    {day.precipitation > 0 && (
-                      <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(59,130,246,0.15)", color: "#60a5fa" }}>
-                        💧 {day.precipitation}mm
-                      </span>
-                    )}
-                    <span className="text-sm font-bold w-8 text-right" style={{ color: "var(--fg)" }}>{day.maxTemp}°</span>
-                    <span className="text-sm w-8 text-right" style={{ color: "var(--fg-muted)" }}>{day.minTemp}°</span>
-                  </div>
-                );
-              })}
-            </div>
+          <div className="wb-panel wx-days" aria-label="7-day forecast">
+            {weather.daily.map((day, i) => {
+              const { Icon } = describeWeather(day.weatherCode);
+              return (
+                <div key={day.date} className="wx-day">
+                  <Icon size={20} strokeWidth={1.5} aria-hidden />
+                  <span style={{ fontWeight: 600 }}>{formatDay(day.date, i)}</span>
+                  <em>{day.precipitation > 0 ? `${day.precipitation} mm` : ""}</em>
+                  <span style={{ color: "var(--fg-muted)", textAlign: "right" }}>{day.minTemp}°</span>
+                  <b style={{ textAlign: "right" }}>{day.maxTemp}°</b>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -250,7 +233,7 @@ function WeatherForecast() {
 
 export default function WeatherClient() {
   return (
-    <ToolShell tool={getTool("weather")!}>
+    <ToolShell tool={getTool("weather")!} layout="bare">
       <WeatherForecast />
     </ToolShell>
   );

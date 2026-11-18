@@ -135,6 +135,15 @@ function bringIntoView(range: Range) {
 }
 
 export default function TextFragmentHighlight() {
+  // `::highlight()` is valid CSS, but Turbopack's CSS parser rejects it, so it's injected at runtime instead of living in globals.css.
+  useEffect(() => {
+    if (document.getElementById("tf-hit-style")) return;
+    const el = document.createElement("style");
+    el.id = "tf-hit-style";
+    el.textContent = "::highlight(tf-hit) { background-color: var(--accent); color: var(--on-accent); }";
+    document.head.appendChild(el);
+  }, []);
+
   useEffect(() => {
     // The original URL, directive included, survives on the navigation entry even though location hides it.
     const nav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;

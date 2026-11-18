@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Plus, X } from "lucide-react";
+import { Moon, Plus, Search, Sun, X } from "lucide-react";
 import ToolShell from "../../../../components/shell/ToolShell";
 import { getTool } from "../../../../lib/tools";
 
@@ -333,24 +333,24 @@ function SkeletonClock({ h, m, s, size = 140 }: { h: number; m: number; s: numbe
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="mx-auto" suppressHydrationWarning>
       <defs>
         <radialGradient id="sf2" cx="50%" cy="50%">
-          <stop offset="0%" stopColor="rgba(139,92,246,0.1)"/><stop offset="100%" stopColor="rgba(0,0,0,0)"/>
+          <stop offset="0%" stopColor="rgba(198,255,61,0.1)"/><stop offset="100%" stopColor="rgba(0,0,0,0)"/>
         </radialGradient>
         <filter id="sg2"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
       </defs>
-      <circle cx={cx} cy={cy} r={r} fill="url(#sf2)" stroke="rgba(139,92,246,0.7)" strokeWidth={1.5}/>
-      <circle cx={cx} cy={cy} r={r-9} fill="none" stroke="rgba(139,92,246,0.2)" strokeWidth={0.5}/>
+      <circle cx={cx} cy={cy} r={r} fill="url(#sf2)" stroke="rgba(198,255,61,0.7)" strokeWidth={1.5}/>
+      <circle cx={cx} cy={cy} r={r-9} fill="none" stroke="rgba(198,255,61,0.2)" strokeWidth={0.5}/>
       {Array.from({length:48}).map((_,i) => {
         const a=toRad(i*7.5+90);
-        return <line key={i} suppressHydrationWarning x1={cx+(r-1)*Math.cos(a)} y1={cy+(r-1)*Math.sin(a)} x2={cx+(r-5)*Math.cos(a)} y2={cy+(r-5)*Math.sin(a)} stroke="rgba(139,92,246,0.35)" strokeWidth={1}/>;
+        return <line key={i} suppressHydrationWarning x1={cx+(r-1)*Math.cos(a)} y1={cy+(r-1)*Math.sin(a)} x2={cx+(r-5)*Math.cos(a)} y2={cy+(r-5)*Math.sin(a)} stroke="rgba(198,255,61,0.35)" strokeWidth={1}/>;
       })}
       {Array.from({length:12}).map((_,i) => {
         const a=toRad(i*30+90);
-        return <line key={i} suppressHydrationWarning x1={cx+(r-10)*Math.cos(a)} y1={cy+(r-10)*Math.sin(a)} x2={cx+(r-20)*Math.cos(a)} y2={cy+(r-20)*Math.sin(a)} stroke="#8b5cf6" strokeWidth={i%3===0?2.5:1.2} filter="url(#sg2)"/>;
+        return <line key={i} suppressHydrationWarning x1={cx+(r-10)*Math.cos(a)} y1={cy+(r-10)*Math.sin(a)} x2={cx+(r-20)*Math.cos(a)} y2={cy+(r-20)*Math.sin(a)} stroke="var(--accent)" strokeWidth={i%3===0?2.5:1.2} filter="url(#sg2)"/>;
       })}
-      <line suppressHydrationWarning x1={cx-8*Math.cos(toRad(hrDeg+90))} y1={cy-8*Math.sin(toRad(hrDeg+90))} x2={cx+(r-34)*Math.cos(toRad(hrDeg+90))} y2={cy+(r-34)*Math.sin(toRad(hrDeg+90))} stroke="#a78bfa" strokeWidth={3} strokeLinecap="round" filter="url(#sg2)"/>
-      <line suppressHydrationWarning x1={cx-10*Math.cos(toRad(minDeg+90))} y1={cy-10*Math.sin(toRad(minDeg+90))} x2={cx+(r-20)*Math.cos(toRad(minDeg+90))} y2={cy+(r-20)*Math.sin(toRad(minDeg+90))} stroke="#60a5fa" strokeWidth={1.8} strokeLinecap="round" filter="url(#sg2)"/>
-      <line suppressHydrationWarning x1={cx+14*Math.cos(toRad(secDeg+270))} y1={cy+14*Math.sin(toRad(secDeg+270))} x2={cx+(r-12)*Math.cos(toRad(secDeg+90))} y2={cy+(r-12)*Math.sin(toRad(secDeg+90))} stroke="#f472b6" strokeWidth={1} strokeLinecap="round" filter="url(#sg2)"/>
-      <circle cx={cx} cy={cy} r={4} fill="#8b5cf6" filter="url(#sg2)"/>
+      <line suppressHydrationWarning x1={cx-8*Math.cos(toRad(hrDeg+90))} y1={cy-8*Math.sin(toRad(hrDeg+90))} x2={cx+(r-34)*Math.cos(toRad(hrDeg+90))} y2={cy+(r-34)*Math.sin(toRad(hrDeg+90))} stroke="var(--fg)" strokeWidth={3} strokeLinecap="round" filter="url(#sg2)"/>
+      <line suppressHydrationWarning x1={cx-10*Math.cos(toRad(minDeg+90))} y1={cy-10*Math.sin(toRad(minDeg+90))} x2={cx+(r-20)*Math.cos(toRad(minDeg+90))} y2={cy+(r-20)*Math.sin(toRad(minDeg+90))} stroke="var(--fg)" strokeWidth={1.8} strokeLinecap="round" filter="url(#sg2)"/>
+      <line suppressHydrationWarning x1={cx+14*Math.cos(toRad(secDeg+270))} y1={cy+14*Math.sin(toRad(secDeg+270))} x2={cx+(r-12)*Math.cos(toRad(secDeg+90))} y2={cy+(r-12)*Math.sin(toRad(secDeg+90))} stroke="var(--accent)" strokeWidth={1} strokeLinecap="round" filter="url(#sg2)"/>
+      <circle cx={cx} cy={cy} r={4} fill="var(--accent)" filter="url(#sg2)"/>
       <circle cx={cx} cy={cy} r={2} fill="#fff"/>
     </svg>
   );
@@ -377,167 +377,162 @@ function ClassicClock({ h, m, s, size = 140 }: { h: number; m: number; s: number
   );
 }
 
+function Face({ tz, style, big = false }: { tz: string; style: ClockStyle; big?: boolean }) {
+  const { h, m, s, timeStr, dayNum } = getTime(tz);
+  if (style === "digital") {
+    return <div className="wc-big" style={{ fontSize: big ? "clamp(2.2rem, 7dvh, 3.6rem)" : "1.75rem", color: "var(--accent-ink)" }}>{timeStr}</div>;
+  }
+  if (style === "minimal") {
+    return (
+      <div className="wc-big" style={{ fontSize: big ? "clamp(2.8rem, 9dvh, 4.6rem)" : "2.2rem" }}>
+        {timeStr.slice(0, 5)}<small>{timeStr.slice(6)}</small>
+      </div>
+    );
+  }
+  return (
+    <div className="wc-face">
+      {style === "rolex" && <RolexClock h={h} m={m} s={s} dayNum={dayNum} size={220} />}
+      {style === "analog" && <ClassicClock h={h} m={m} s={s} />}
+      {style === "skeleton" && <SkeletonClock h={h} m={m} s={s} />}
+    </div>
+  );
+}
+
+const tzAbbr = (tz: string) =>
+  new Intl.DateTimeFormat("en", { timeZone: tz, timeZoneName: "short" }).formatToParts(new Date()).find(p => p.type === "timeZoneName")?.value ?? tz;
+
 function ClockCard({ entry, style, onRemove }: {
   entry: { city: string; tz: string; flag: string }; style: ClockStyle; onRemove: () => void;
 }) {
-  const { h, m, s, timeStr, dateStr, isDay, dayNum } = getTime(entry.tz);
-  const isAnalog = ["rolex","analog","skeleton"].includes(style);
-
+  const { dateStr, isDay } = getTime(entry.tz);
   return (
-    <div className="card group relative p-5 flex flex-col gap-3 overflow-hidden">
-      <button onClick={onRemove}
-        className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity rounded-full w-6 h-6 flex items-center justify-center z-10"
-        style={{ background: "var(--bg-card-hover)", color: "var(--fg-muted)" }}>
-        <X size={12}/>
-      </button>
-      <div className="flex items-center gap-2">
-        <span className="text-xl">{entry.flag}</span>
+    <div className="wb-panel wc-card">
+      <button className="wc-x" onClick={onRemove} aria-label={`Remove ${entry.city}`}><X size={13} /></button>
+      <div className="wc-card-head">
+        <span aria-hidden style={{ fontSize: "1.25rem" }}>{entry.flag}</span>
         <div>
-          <p className="text-sm font-bold leading-none" style={{ color: "var(--fg)" }}>{entry.city}</p>
-          <p className="text-xs mt-0.5" style={{ color: "var(--fg-muted)" }}>{dateStr}</p>
+          <b>{entry.city}</b>
+          <small>{dateStr}</small>
         </div>
-        <span className="ml-auto text-lg">{isDay ? "☀️" : "🌙"}</span>
       </div>
-
-      {style === "rolex"    && <RolexClock h={h} m={m} s={s} dayNum={dayNum} size={180}/>}
-      {style === "analog"   && <ClassicClock h={h} m={m} s={s}/>}
-      {style === "skeleton" && <SkeletonClock h={h} m={m} s={s}/>}
-      {style === "digital"  && (
-        <div className="text-center py-3">
-          <span className="text-4xl font-black tracking-widest font-mono grad-text">{timeStr}</span>
-        </div>
-      )}
-      {style === "minimal" && (
-        <div className="text-center py-3">
-          <span className="text-5xl font-black tracking-tight" style={{ color: "var(--fg)" }}>{timeStr.slice(0,5)}</span>
-          <span className="text-xl font-bold ml-1" style={{ color: "var(--fg-muted)" }}>{timeStr.slice(6)}</span>
-        </div>
-      )}
-
-      <p className="text-xs text-center" style={{ color: "var(--fg-muted)" }}>
-        {new Intl.DateTimeFormat("en",{timeZone:entry.tz,timeZoneName:"short"}).formatToParts(new Date()).find(p=>p.type==="timeZoneName")?.value}
+      <Face tz={entry.tz} style={style} />
+      <p className="wc-tz" style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: ".35rem" }}>
+        {isDay ? <Sun size={12} aria-hidden /> : <Moon size={12} aria-hidden />} {tzAbbr(entry.tz)}
       </p>
     </div>
   );
 }
 
+const STYLES: { value: ClockStyle; label: string }[] = [
+  { value: "rolex", label: "Rolex" },
+  { value: "analog", label: "Classic" },
+  { value: "skeleton", label: "Skeleton" },
+  { value: "digital", label: "Digital" },
+  { value: "minimal", label: "Minimal" },
+];
+
 function WorldClock() {
   const [, setTick] = useState(0);
+  const [mounted, setMounted] = useState(false);
   const [style, setStyle] = useState<ClockStyle>("rolex");
-  const [clocks, setClocks] = useState(["America/New_York","Europe/London","Asia/Tokyo"]);
+  const [clocks, setClocks] = useState(["America/New_York", "Europe/London", "Asia/Tokyo"]);
   const [adding, setAdding] = useState(false);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    const id = setInterval(() => setTick(t => t+1), 1000);
+    setMounted(true); // times only render on the client, so server and browser can't disagree
+    const id = setInterval(() => setTick(t => t + 1), 1000);
     return () => clearInterval(id);
   }, []);
 
-  const normalize = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  useEffect(() => {
+    if (!adding) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setAdding(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [adding]);
+
+  const normalize = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const filtered = TIMEZONES.filter(t => {
     const q = normalize(search);
     return (normalize(t.city).includes(q) || t.tz.toLowerCase().includes(q)) && !clocks.includes(t.tz);
   });
 
-  const styles: { value: ClockStyle; label: string }[] = [
-    { value: "rolex",    label: "👑 Rolex" },
-    { value: "analog",   label: "⏱ Classic" },
-    { value: "skeleton", label: "🔩 Skeleton" },
-    { value: "digital",  label: "🔢 Digital" },
-    { value: "minimal",  label: "◻ Minimal" },
-  ];
+  if (!mounted) return null;
 
-  // Hero rolex — local time
   const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const localTime = getTime(localTz);
+  const local = getTime(localTz);
+  const analog = ["rolex", "analog", "skeleton"].includes(style);
+
+  function addTz(tz: string) { setClocks(c => [...c, tz]); setAdding(false); setSearch(""); }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-10">
-      <div className="text-center">
-        <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "var(--accent)" }}>Tool</p>
-        <h1 className="text-4xl font-black tracking-tight grad-text">World Clock</h1>
-      </div>
-
-      {/* ── HERO ROLEX ── */}
-      <div className="card p-8 flex flex-col items-center gap-4 relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 grad-bg opacity-5"/>
-        <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full blur-3xl opacity-10 grad-bg"/>
-        <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--fg-muted)" }}>Your Local Time</p>
-        <RolexClock h={localTime.h} m={localTime.m} s={localTime.s} dayNum={localTime.dayNum} size={280}/>
-        <div className="text-center">
-          <p suppressHydrationWarning className="text-2xl font-black" style={{ color: "var(--fg)" }}>{localTime.timeStr}</p>
-          <p suppressHydrationWarning className="text-sm mt-1" style={{ color: "var(--fg-muted)" }}>{localTime.dateStr} · {localTz}</p>
+    <div className="wc">
+      <div className="wb-panel wc-local">
+        <Face tz={localTz} style={style} big />
+        <div className="wc-local-txt">
+          {analog && <strong>{local.timeStr}</strong>}
+          <span>{local.dateStr} · {localTz.replace(/_/g, " ")}</span>
+          <span className="label">Your local time</span>
         </div>
       </div>
 
-      {/* style picker */}
-      <div className="flex flex-wrap gap-2 justify-center">
-        {styles.map(s => (
-          <button key={s.value} onClick={() => setStyle(s.value)}
-            className="rounded-full px-4 py-1.5 text-xs font-bold transition-all"
-            style={style === s.value
-              ? { background: "linear-gradient(135deg,var(--grad-start),var(--grad-end))", color: "#fff" }
-              : { background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--fg-muted)" }}>
-            {s.label}
-          </button>
-        ))}
-      </div>
+      <div style={{ display: "flex", flexDirection: "column", minHeight: 0 }}>
+        <div className="wc-toolbar">
+          <span className="label" style={{ flex: "none" }}>Cities</span>
+          <div className="wb-seg wc-styles" role="group" aria-label="Clock style">
+            {STYLES.map(st => (
+              <button key={st.value} aria-pressed={style === st.value} onClick={() => setStyle(st.value)}>{st.label}</button>
+            ))}
+          </div>
+        </div>
 
-      {/* clocks grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {clocks.map(tz => {
-          const entry = TIMEZONES.find(t => t.tz === tz) ?? { city: tz, tz, flag: "🌐" };
-          return <ClockCard key={tz} entry={entry} style={style} onRemove={() => setClocks(c => c.filter(x => x !== tz))}/>;
-        })}
-        <button onClick={() => setAdding(true)}
-          className="card flex flex-col items-center justify-center gap-2 min-h-[200px] transition-all hover:border-[var(--accent)]"
-          style={{ borderStyle: "dashed" }}>
-          <Plus size={24} style={{ color: "var(--fg-muted)" }}/>
-          <span className="text-sm font-semibold" style={{ color: "var(--fg-muted)" }}>Add City</span>
-        </button>
+        <div className="wb-scroll" style={{ flex: 1 }}>
+          <div className="wc-cities">
+            {clocks.map(tz => {
+              const entry = TIMEZONES.find(t => t.tz === tz) ?? { city: tz, tz, flag: "🌐" };
+              return <ClockCard key={tz} entry={entry} style={style} onRemove={() => setClocks(c => c.filter(x => x !== tz))} />;
+            })}
+            <button className="wc-add" onClick={() => setAdding(true)}>
+              <Plus size={22} aria-hidden />
+              Add a city
+            </button>
+          </div>
+        </div>
       </div>
 
       {adding && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }}
-          onClick={() => setAdding(false)}>
-          <div className="w-full max-w-sm rounded-2xl p-5 space-y-4"
-            style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}
-            onClick={e => e.stopPropagation()}>
-            <h3 className="font-black text-lg" style={{ color: "var(--fg)" }}>Add City</h3>
-            <input autoFocus value={search} onChange={e => setSearch(e.target.value)}
-              placeholder="Search city or timezone…"
-              className="w-full rounded-xl px-4 py-2.5 text-sm outline-none"
-              style={{ background: "var(--bg-card-hover)", border: "1px solid var(--border)", color: "var(--fg)" }}/>
-            <div className="space-y-1 max-h-64 overflow-y-auto">
+        <div className="wc-modal" onClick={() => setAdding(false)}>
+          <div className="wc-modal-in" role="dialog" aria-label="Add a city" onClick={e => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h2 style={{ margin: 0, fontSize: "1.15rem", fontWeight: 700, letterSpacing: "-.02em" }}>Add a city</h2>
+              <button className="wc-x" style={{ opacity: 1, position: "static" }} onClick={() => setAdding(false)} aria-label="Close"><X size={14} /></button>
+            </div>
+            <label style={{ position: "relative", display: "block" }}>
+              <Search size={15} aria-hidden style={{ position: "absolute", left: ".85rem", top: "50%", transform: "translateY(-50%)", color: "var(--fg-muted)" }} />
+              <input autoFocus className="wb-input" style={{ paddingLeft: "2.4rem" }} value={search}
+                onChange={e => setSearch(e.target.value)} placeholder="City or timezone" aria-label="Search cities" />
+            </label>
+            <div className="wb-scroll" style={{ flex: 1 }}>
               {filtered.map((t, i) => (
-                <button key={`${t.tz}-${i}`}
-                  onClick={() => { setClocks(c => [...c, t.tz]); setAdding(false); setSearch(""); }}
-                  className="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-[var(--bg-card-hover)]">
-                  <span className="text-xl">{t.flag}</span>
-                  <div>
-                    <p className="text-sm font-semibold" style={{ color: "var(--fg)" }}>{t.city}</p>
-                    <p className="text-xs" style={{ color: "var(--fg-muted)" }}>{t.tz}</p>
-                  </div>
+                <button key={`${t.tz}-${i}`} className="wc-opt" onClick={() => addTz(t.tz)}>
+                  <span style={{ fontSize: "1.25rem" }} aria-hidden>{t.flag}</span>
+                  <span><b style={{ fontWeight: 600 }}>{t.city}</b><small>{t.tz}</small></span>
                 </button>
               ))}
               {filtered.length === 0 && search.includes("/") && (() => {
                 try { new Intl.DateTimeFormat("en", { timeZone: search }); }
-                catch { return <p className="text-sm text-center py-4" style={{ color: "var(--fg-muted)" }}>Invalid timezone</p>; }
+                catch { return <p className="rail-empty" style={{ textAlign: "center", padding: "1rem 0" }}>That isn’t a valid timezone name.</p>; }
                 return (
-                  <button onClick={() => { setClocks(c => [...c, search]); setAdding(false); setSearch(""); }}
-                    className="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-[var(--bg-card-hover)]">
-                    <span className="text-xl">🌐</span>
-                    <div>
-                      <p className="text-sm font-semibold" style={{ color: "var(--fg)" }}>{search}</p>
-                      <p className="text-xs" style={{ color: "var(--fg-muted)" }}>Custom IANA timezone</p>
-                    </div>
+                  <button className="wc-opt" onClick={() => addTz(search)}>
+                    <span style={{ fontSize: "1.25rem" }} aria-hidden>🌐</span>
+                    <span><b style={{ fontWeight: 600 }}>{search}</b><small>Custom IANA timezone</small></span>
                   </button>
                 );
               })()}
               {filtered.length === 0 && !search.includes("/") && (
-                <p className="text-sm text-center py-4" style={{ color: "var(--fg-muted)" }}>
-                  No results — try e.g. Africa/Yaounde
+                <p className="rail-empty" style={{ textAlign: "center", padding: "1rem 0" }}>
+                  No match. Try a timezone name like Africa/Yaounde.
                 </p>
               )}
             </div>
@@ -550,7 +545,7 @@ function WorldClock() {
 
 export default function WorldClockClient() {
   return (
-    <ToolShell tool={getTool("world-clock")!}>
+    <ToolShell tool={getTool("world-clock")!} layout="bare">
       <WorldClock />
     </ToolShell>
   );
