@@ -68,6 +68,9 @@ body {
 }
 
 ::selection { background: var(--accent); color: var(--on-accent); }
+/* "Copy link to highlight" targets: native match + the fallback in TextFragmentHighlight.tsx (separate rules: an unknown pseudo drops the whole rule) */
+::target-text { background: var(--accent); color: var(--on-accent); }
+::highlight(tf-hit) { background-color: var(--accent); color: var(--on-accent); }
 
 :focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 3px; }
 

@@ -6,6 +6,7 @@ import Loader from "../../components/shell/Loader";
 import Cursor from "../../components/shell/Cursor";
 import MotionProvider from "../../components/motion/MotionProvider";
 import PageTransition from "../../components/shell/PageTransition";
+import TextFragmentHighlight from "../../components/shell/TextFragmentHighlight";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,6 +16,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <MotionProvider />
       <Cursor />
       <PageTransition />
+      <TextFragmentHighlight />
       <Header />
       <PageFrame>{children}</PageFrame>
       <Footer />
